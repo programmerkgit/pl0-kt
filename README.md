@@ -4,8 +4,9 @@ src配下でないと効かない。
 
 
 ## Kotlin to learn
-- [ ] ファイルの操作の理解が必↓
-- [ ] Stdlibの理解が必要↓
+- [x] ファイルの操作の理解が必
+- [x] Stdlibの理解が必要
 - [ ] packageの管理の理解
 - [ ] IDEAのコード補完の設定
 - [ ] IDEAのデバグ設定   
+- [ ] Functionの扱い

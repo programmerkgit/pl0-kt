@@ -1,4 +1,8 @@
-package trainning/* 電卓計算機の実装 */
+package trainning
+
+import java.io.File
+
+/* 電卓計算機の実装 */
 
 /**
  * 前置きを後起きに変換する記法:  F(式, operator, 式) == F(式)F(式)operater
@@ -15,5 +19,15 @@ fun main() {
     val operatorRegex = Regex("x|¥-|¥+|/")
     val n = expressionRegex.matches("0")
     println(spaceRegex.matches(" "))
-    /* ファイルの操作の理解が必要 */
+
+    val path = System.getProperty("user.dir")
+    val reader = File(path).resolve("files/00.txt").reader()
+    fun doSomething(f: (char: Char) -> Unit) {
+        var byte = reader.read()
+        while (byte != -1) {
+            val char = byte.toChar()
+            f(char)
+            byte = reader.read()
+        }
+    }
 }
