@@ -16,6 +16,10 @@ import java.lang.Exception
  * F(数字) = 数字
  * */
 fun main() {
+    /* Tokenize */
+    /* Op Priority */
+    /* Syntax Analyze */
+    /* Pop */
     val numberRegex = Regex("[1-9][0-9]*|0")
     val spaceRegex = Regex("\\s")
     val operatorRegex = Regex("\\*|-|\\+|/")
