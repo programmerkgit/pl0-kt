@@ -1,8 +1,4 @@
-package trainning2
-
-import java.io.File
-import java.io.InputStreamReader
-import java.lang.Exception
+package training2
 
 /* 電卓計算機の実装 */
 
