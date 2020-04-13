@@ -9,7 +9,8 @@ src配下でないと効かない。
 - [ ] Regexp => Parseのため
 - [ ] when => 効果的な分岐のため
 - [ ] Testコードの設定方法
-- [ ] packageの管理の理解
+- [x] packageの管理の理解
+- [x] Module Visibility
 - [ ] IDEAのコード補完の設定
 - [ ] IDEAのデバグ設定   
-- [ ] Functionの扱い
+- [x] Functionの扱い

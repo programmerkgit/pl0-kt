@@ -173,19 +173,19 @@ fun main() {
     println(numStack[0])
 }
 
-interface Token {
+private interface Token {
     val tokenType: String
     override fun toString(): String
 }
 
-class NumberToken(private val num: String) : Token {
+private class NumberToken(private val num: String) : Token {
     override val tokenType = "num"
     override fun toString(): String {
         return num
     }
 }
 
-class OperatorToken(private val operator: String) : Token {
+private class OperatorToken(private val operator: String) : Token {
     override val tokenType = "op"
     override fun toString(): String {
         return operator
