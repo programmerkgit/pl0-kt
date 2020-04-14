@@ -42,7 +42,7 @@ fun main() {
 private val tokenMatchers: List<TokenMatcher> = listOf(
     TokenMatcher(Regex("\\$"), "operator"),
     TokenMatcher(Regex("\\^"), "operator"),
-    TokenMatcher(Regex("[1-9][0-9]*"), "number"),
+    TokenMatcher(Regex("([1-9][0-9]*(\\.[0-9]+)?)|0(\\.[0-9]+)?"), "number"),
     TokenMatcher(Regex("[/*+-]"), "operator")
 )
 
