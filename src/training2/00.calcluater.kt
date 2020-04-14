@@ -115,6 +115,7 @@ private fun reverseTokens(tokens: List<TokenMatcher>): List<TokenMatcher> {
         /* popしない */
     }
     /*　tokensの最初と最後にstartとend op を設置　*/
+    /* TODO: 無理やりパースしたことにするより、元テキストをいじった方が直感的 */
     val endMatcher: TokenMatcher = TokenMatcher(Regex("\\$"), "operator")
     val startMatcher: TokenMatcher = TokenMatcher(Regex("\\^"), "operator")
     endMatcher.parse("$", 0)
