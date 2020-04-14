@@ -12,7 +12,7 @@ fun main() {
     val reversed = reverseTokens(tokens)
     val stack: MutableList<Number> = mutableListOf()
     reversed.forEach {
-        val value = it.matchResult?.value!!
+        val value = it.value
         val tokenType: String = it.tokenType
         if (tokenType === "number") {
             stack.add(value.toFloat())
@@ -39,20 +39,20 @@ fun main() {
     println(stack[0])
 }
 
-private val tokenList: List<TokenMatcher> = listOf(
+private val tokenMatchers: List<TokenMatcher> = listOf(
     TokenMatcher(Regex("\\$"), "operator"),
     TokenMatcher(Regex("\\^"), "operator"),
     TokenMatcher(Regex("[1-9][0-9]*"), "number"),
     TokenMatcher(Regex("[/*+-]"), "operator")
 )
 
-private fun tokenize(): MutableList<TokenMatcher> {
+private fun tokenize(): MutableList<Token> {
     println("tokenize start")
     val path = System.getProperty("user.dir")
     var text = File(path).resolve("files/00.txt").reader().readText()
     /* 開始と終了をトークン化するためのダミー文字 */
     text = "^$text$"
-    val resultTokens: MutableList<TokenMatcher> = mutableListOf()
+    val resultTokens: MutableList<Token> = mutableListOf()
 
     var i = 0
     while (i < text.length) {
@@ -65,23 +65,19 @@ private fun tokenize(): MutableList<TokenMatcher> {
         }
         /* 空白でもEOFでもない場合はTokenize開始 */
         /* Regex一覧からregexを順番に当てて、マッチした一覧を保持 */
-        val matchedMatcher = tokenList.filter {
-            val match = it.parse(text, i)
-            match != null
+        val matchedTokens: List<Token> = tokenMatchers.mapNotNull {
+            it.parse(text, i)
         }
         /* マッチがなかったらエラー */
-        if (matchedMatcher.isEmpty()) {
+        if (matchedTokens.isEmpty()) {
             throw Error("unexpected char $char at index $i")
         }
         /* マッチしたうち、最長のRegexを選択 */
-        val result = matchedMatcher.maxBy { it.matchResult!!.value.length }
-        val value: String = result?.matchResult!!.value
-        i += value.length
+        val result = matchedTokens.maxBy { it.value.length }!!
+        i += result.value.length
         /* Tokenizeして文字を読み進める */
-        val tokenCopy = TokenMatcher(result.pattern, result.tokenType)
-        tokenCopy.parse(value, 0)
-        resultTokens.add(tokenCopy)
-        println("Value: ${tokenCopy.matchResult?.value} TokenType: ${tokenCopy.tokenType}")
+        resultTokens.add(result)
+        println("Value: ${result.value} TokenType: ${result.tokenType}")
     }
     println("EOF")
     return resultTokens
@@ -94,17 +90,17 @@ private val OpPriorities = mapOf(
     "*" to 3, "/" to 3
 )
 
-private fun reverseTokens(tokens: List<TokenMatcher>): List<TokenMatcher> {
-    val resultStack: MutableList<TokenMatcher> = mutableListOf()
+private fun reverseTokens(tokens: List<Token>): List<Token> {
+    val resultStack: MutableList<Token> = mutableListOf()
     /* 最初の処理と最終処理を行う */
-    val opStack: MutableList<TokenMatcher> = mutableListOf()
-    val inputTokens: MutableList<TokenMatcher> = tokens.toMutableList()
+    val opStack: MutableList<Token> = mutableListOf()
+    val inputTokens: MutableList<Token> = tokens.toMutableList()
 
     /* 演算子のPOPを定義 */
-    fun pop(readOp: TokenMatcher) {
+    fun pop(readOp: Token) {
         if (opStack.size == 0) return
-        val topOpPriority = OpPriorities.getValue(opStack.last().matchResult!!.value)
-        val readOpPriority = OpPriorities.getValue(readOp.matchResult!!.value)
+        val topOpPriority = OpPriorities.getValue(opStack.last().value)
+        val readOpPriority = OpPriorities.getValue(readOp.value)
         /* 読み込んだOpとStackOpを比較 */
         if (readOpPriority <= topOpPriority) {
             /* if opStackのTopが優先順位が高い場合,もしくは同一の場合(左結合なので同一だと先が優先度高い) */
@@ -145,17 +141,13 @@ private open class TokenMatcher(val pattern: Regex, val tokenType: String) {
     /* TODO: TokenMatcherとTokenクラスに分ける　*/
     /* TokenMatcherとTokenは別にクラス持つ */
     /* parseした結果、対応するTokenを返すべき */
-    fun parse(text: String, i: Int): MatchResult? {
+    fun parse(text: String, i: Int): Token? {
         val matchResult = pattern.find(text, i)
         val first = matchResult?.range?.first
         return if (first == i) {
-            this.matchResult = matchResult
-            matchResult
+            return Token(pattern, tokenType, matchResult.value)
         } else {
             null
         }
     }
-
-    var matchResult: MatchResult? = null
-
 }
