@@ -135,6 +135,11 @@ private fun reverseTokens(tokens: List<TokenMatcher>): List<TokenMatcher> {
     return resultStack
 }
 
+class Token(val pattern: Regex, val tokenType: String, val value: String) {
+    constructor(pattern: String, tokenType: String, value: String) : this(Regex(pattern), tokenType, value) {
+    }
+}
+
 private open class TokenMatcher(val pattern: Regex, val tokenType: String) {
 
     /* TODO: TokenMatcherとTokenクラスに分ける　*/
