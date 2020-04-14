@@ -1,7 +1,6 @@
 package training2
 
 import java.io.File
-import java.util.regex.Pattern
 
 /* 電卓計算機の実装 */
 
@@ -55,7 +54,7 @@ private fun tokenize(): MutableList<TokenMatcher> {
     text = "^$text$"
     val resultTokens: MutableList<TokenMatcher> = mutableListOf()
 
-    var i = 0;
+    var i = 0
     while (i < text.length) {
         /* 1文字目を読み込み */
         val char = text[i]
@@ -103,7 +102,7 @@ private fun reverseTokens(tokens: List<TokenMatcher>): List<TokenMatcher> {
 
     /* 演算子のPOPを定義 */
     fun pop(readOp: TokenMatcher) {
-        if (opStack.size == 0) return;
+        if (opStack.size == 0) return
         val topOpPriority = OpPriorities.getValue(opStack.last().matchResult!!.value)
         val readOpPriority = OpPriorities.getValue(readOp.matchResult!!.value)
         /* 読み込んだOpとStackOpを比較 */
@@ -119,7 +118,6 @@ private fun reverseTokens(tokens: List<TokenMatcher>): List<TokenMatcher> {
         /* popしない */
     }
     inputTokens.forEach {
-        val value: String = it.matchResult!!.value
         when (it.tokenType) {
             /* tokenがoperatorの場合 */
             "operator" -> {
@@ -142,11 +140,11 @@ private open class TokenMatcher(val pattern: Regex, val tokenType: String) {
     fun parse(text: String, i: Int): MatchResult? {
         val matchResult = pattern.find(text, i)
         val first = matchResult?.range?.first
-        if (first == i) {
+        return if (first == i) {
             this.matchResult = matchResult
-            return matchResult
+            matchResult
         } else {
-            return null
+            null
         }
     }
 
