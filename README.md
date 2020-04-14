@@ -7,6 +7,8 @@ src配下でないと効かない。
 - [x] ファイルの操作の理解が必
 - [x] Stdlibの理解が必要
 - [x] Regexp => Parseのため
+- [ ] Mapとsingletonの理解 => 簡易なdictionary作成と型付与のため
+- [ ] Map型、singleton型の理解
 - [ ] when => 効果的な分岐のため
 - [ ] Testコードの設定方法
 - [x] packageの管理の理解

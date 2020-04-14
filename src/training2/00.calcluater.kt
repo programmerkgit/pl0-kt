@@ -44,6 +44,8 @@ const val EOF = (-1).toChar()
 
 
 private val tokenList: List<TokenMatcher> = listOf(
+    TokenMatcher(Regex("\\$"), "operator"),
+    TokenMatcher(Regex("\\^"), "operator"),
     TokenMatcher(Regex("[1-9][0-9]*"), "number"),
     TokenMatcher(Regex("[/*+-]"), "operator")
 )
@@ -52,11 +54,13 @@ private fun tokenize(): MutableList<TokenMatcher> {
     println("tokenize start")
     val path = System.getProperty("user.dir")
     var text = File(path).resolve("files/00.txt").reader().readText()
+    /* 開始と終了をトークン化するためのダミー文字 */
+    text = "^$text$"
     val resultTokens: MutableList<TokenMatcher> = mutableListOf()
 
     var i = 0;
     while (i < text.length) {
-        /* 文字を読み込みカット */
+        /* 1文字目を読み込み */
         val char = text[i]
         /* 文字を読み空白を削除 */
         if (char == ' ') {
@@ -99,14 +103,17 @@ private fun reverseTokens(tokens: List<TokenMatcher>): List<TokenMatcher> {
     /* 最初の処理と最終処理を行う */
     val opStack: MutableList<TokenMatcher> = mutableListOf()
     val inputTokens: MutableList<TokenMatcher> = tokens.toMutableList()
+
+    /* 演算子のPOPを定義 */
     fun pop(readOp: TokenMatcher) {
+        if (opStack.size == 0) return;
         val topOpPriority = OpPriorities.getValue(opStack.last().matchResult!!.value)
         val readOpPriority = OpPriorities.getValue(readOp.matchResult!!.value)
         /* 読み込んだOpとStackOpを比較 */
         if (readOpPriority <= topOpPriority) {
-            /* if opStackのTopが優先順位が高い場合,もしくは同一の場合(左結合) */
-            /* opStackから演算子をresultStackに載せる */
+            /* if opStackのTopが優先順位が高い場合,もしくは同一の場合(左結合なので同一だと先が優先度高い) */
             val top = opStack.removeAt(opStack.size - 1)
+            /* opStackから演算子をresultStackに載せる */
             resultStack.add(top)
             /* pop()継続 */
             pop(readOp)
@@ -114,22 +121,14 @@ private fun reverseTokens(tokens: List<TokenMatcher>): List<TokenMatcher> {
         /* else opStackのTopが優先順位が低い場合 */
         /* popしない */
     }
-    /*　tokensの最初と最後にstartとend op を設置　*/
-    /* TODO: 無理やりパースしたことにするより、元テキストをいじった方が直感的 */
-    val endMatcher: TokenMatcher = TokenMatcher(Regex("\\$"), "operator")
-    val startMatcher: TokenMatcher = TokenMatcher(Regex("\\^"), "operator")
-    endMatcher.parse("$", 0)
-    startMatcher.parse("^", 0)
-    inputTokens.add(endMatcher)
-    opStack.add(startMatcher)
     inputTokens.forEach {
         val value: String = it.matchResult!!.value
         when (it.tokenType) {
             /* tokenがoperatorの場合 */
-            /* pop作業の開始 */
-            /* popが終わったらopStackに読み込んだトークンをstackする */
             "operator" -> {
+                /* pop作業の開始 */
                 pop(it)
+                /* popが終わったらopStackに読み込んだトークンをstackする */
                 opStack.add(it)
             }
             /* tokenが数字の場合 => stackする */
