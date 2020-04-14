@@ -146,11 +146,6 @@ private fun reverseTokens(tokens: List<TokenMatcher>): List<TokenMatcher> {
     return resultStack
 }
 
-/* Tokenize */
-/* 優先順位の低い演算子が出てきたらpopする */
-/* Tokenを演算子の優先順位に */
-
-
 private open class TokenMatcher(val pattern: Regex, val tokenType: String) {
 
     fun parse(text: String, i: Int): MatchResult? {
