@@ -64,7 +64,6 @@ private fun tokenize(): MutableList<Token> {
             i++
             continue
         }
-        /* 空白でもEOFでもない場合はTokenize開始 */
         /* Regex一覧からregexを順番に当てて、マッチした一覧を保持 */
         val matchedTokens: List<Token> = tokenMatchers.mapNotNull {
             it.parse(text, i)
