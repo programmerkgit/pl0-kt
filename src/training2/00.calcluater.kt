@@ -40,9 +40,6 @@ fun main() {
     println(stack[0])
 }
 
-const val EOF = (-1).toChar()
-
-
 private val tokenList: List<TokenMatcher> = listOf(
     TokenMatcher(Regex("\\$"), "operator"),
     TokenMatcher(Regex("\\^"), "operator"),
