@@ -48,6 +48,7 @@ private val tokenMatchers: List<TokenMatcher> = listOf(
 
 private fun tokenize(): MutableList<Token> {
     println("tokenize start")
+    /* 標準入力からファイル名を早退、絶対パスで受け入れられるようにする */
     val path = System.getProperty("user.dir")
     var text = File(path).resolve("files/00.txt").reader().readText()
     /* 開始と終了をトークン化するためのダミー文字 */
