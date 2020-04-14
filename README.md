@@ -6,7 +6,7 @@ src配下でないと効かない。
 ## Kotlin to learn
 - [x] ファイルの操作の理解が必
 - [x] Stdlibの理解が必要
-- [ ] Regexp => Parseのため
+- [x] Regexp => Parseのため
 - [ ] when => 効果的な分岐のため
 - [ ] Testコードの設定方法
 - [x] packageの管理の理解

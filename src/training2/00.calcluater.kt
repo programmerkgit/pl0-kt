@@ -6,13 +6,7 @@ import java.util.regex.Pattern
 /* 電卓計算機の実装 */
 
 /**
- * 前置きを後起きに変換する記法:  F(式, operator, 式) == F(式)F(式)operater
- * 文字を読み込む => 数字
- * 文字を読み込む => 演算子
- * 文字を読み込む => 数字
- * 文字を読み込む => 優先度の低い演算子を発見
- * F(数字 + 数字, +, (残り)
- * F(数字) = 数字
+ *
  * */
 fun main() {
     val tokens = tokenize()
