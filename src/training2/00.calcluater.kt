@@ -137,6 +137,9 @@ private fun reverseTokens(tokens: List<TokenMatcher>): List<TokenMatcher> {
 
 private open class TokenMatcher(val pattern: Regex, val tokenType: String) {
 
+    /* TODO: TokenMatcherとTokenクラスに分ける　*/
+    /* TokenMatcherとTokenは別にクラス持つ */
+    /* parseした結果、対応するTokenを返すべき */
     fun parse(text: String, i: Int): MatchResult? {
         val matchResult = pattern.find(text, i)
         val first = matchResult?.range?.first
