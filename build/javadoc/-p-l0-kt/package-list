@@ -1,0 +1,9 @@
+$dokka.format:markdown
+$dokka.linkExtension:md
+
+org.example
+org.example.easyCompiler
+org.example.token
+org.example.training
+org.example.training2
+org.example.varTable
