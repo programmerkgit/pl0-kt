@@ -6,5 +6,7 @@ package org.example.token
  */
 enum class TokenCategory {
     Operator,
-    Number
+    Number,
+    Blank,
+    Identifier
 }
