@@ -2,6 +2,8 @@ package org.example.token
 
 class Token(
     val matcher: TokenMatcher,
-    val value: String
+    val text: String,
+    var value: Any = text,
+    var type: String = ""
 ) {
 }

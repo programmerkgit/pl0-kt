@@ -8,7 +8,8 @@ enum class TokenMatcher(val pattern: Regex, val category: TokenCategory) {
     Assign(":=", TokenCategory.Operator),
     WhiteSpace("\\s+", TokenCategory.Blank),
     Identifier("[a-zA-Z]\\w*", TokenCategory.Identifier),
-    Number("[0-9]+(\\.[0-9]+)?", TokenCategory.Number);
+    Float("[0-9]+\\.[0-9]+", TokenCategory.Number),
+    Integer("-?([1-9][0-9]*|[0-9])", TokenCategory.Number);// 「|」では最初にマッチしてしまうので、長いのを手前に
 
     constructor(pattern: String, category: TokenCategory) : this(Regex(pattern), category)
 
@@ -25,3 +26,15 @@ enum class TokenMatcher(val pattern: Regex, val category: TokenCategory) {
         }
     }
 }
+
+val TokenMatchers = listOf<TokenMatcher>(
+    TokenMatcher.Addition,
+    TokenMatcher.Multiply,
+    TokenMatcher.WhiteSpace,
+    TokenMatcher.Subtract,
+    TokenMatcher.Division,
+    TokenMatcher.Identifier,
+    TokenMatcher.Assign,
+    TokenMatcher.Float,
+    TokenMatcher.Integer
+)
