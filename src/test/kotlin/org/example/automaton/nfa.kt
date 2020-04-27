@@ -15,7 +15,7 @@ class NFATest {
     @Test
     fun testReverse2() {
         val pattern = "ab(cd(e|f)g|d)"
-        val expected = "ab+cd+ef|()g+d|()"
+        val expected = "ab_cd_ef|()g_d|()"
         assertEquals(expected, createReverseStack(pattern))
     }
 }

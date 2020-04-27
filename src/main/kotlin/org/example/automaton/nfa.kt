@@ -1,3 +1,5 @@
+package org.example.automaton
+
 class NFARegex(val pattern: String) {
     operator fun plus(nfaRegex: NFARegex): NFARegex {
         return NFARegex(pattern + nfaRegex.pattern);
@@ -13,4 +15,4 @@ class NFARegex(val pattern: String) {
 }
 
 /* example */
-// val a = NFARegex("a") or NFARegex("b") + NFARegex("c").closure()
+// val a = org.example.automaton.NFARegex("a") or org.example.automaton.NFARegex("b") + org.example.automaton.NFARegex("c").closure()
