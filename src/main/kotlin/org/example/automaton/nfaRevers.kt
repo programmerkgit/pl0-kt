@@ -1,6 +1,7 @@
 package org.example.automaton
 
 operator fun Regex.contains(char: Char): Boolean = this.matches(char.toString())
+
 fun greaterAThanB(a: Char, b: Char): Boolean {
     return (priorities[a] ?: error("NO OP $a")) >= (priorities[b] ?: error("NO OP $b"))
 }

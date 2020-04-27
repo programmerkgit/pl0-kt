@@ -25,14 +25,12 @@ class NFATest {
         val expected = "ab*|"
         assertEquals(expected, createReverseStack(pattern))
     }
-
     @Test
     fun testReverse4() {
         val pattern = "a(b|c)*"
         val expected = "abc|*)(_"
         assertEquals(expected, createReverseStack(pattern))
     }
-
     @Test
     fun testReverse5() {
         val pattern = "a(b|c)*d"

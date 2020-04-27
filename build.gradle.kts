@@ -17,6 +17,6 @@ tasks.test {
     maxHeapSize = "1G"
 }
 tasks.dokka {
-    outputFormat = "markdown"
+    outputFormat = "html"
     outputDirectory = "$buildDir/javadoc"
 }

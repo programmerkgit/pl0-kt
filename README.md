@@ -19,3 +19,4 @@ src配下でないと効かない。
 - [ ] IDEAのデバグ設定   
 - [x] Functionの扱い
 - [ ] Dokkaの扱い
+- [ ] Kotlinの型の扱い
