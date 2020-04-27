@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.automaton.NFATest" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-04-27T13:30:21" hostname="keishis-iMac.local" time="0.024">
+  <properties/>
+  <testcase name="testReverse2" classname="org.example.automaton.NFATest" time="0.024"/>
+  <system-out><![CDATA[^
+[]
+[]
+a
+[^]
+[]
+b
+[^]
+[a]
+(
+[^, +]
+[a, b]
+c
+[^, (]
+[a, b, +]
+d
+[^, (]
+[a, b, +, c]
+(
+[^, (, +]
+[a, b, +, c, d]
+e
+[^, (, (]
+[a, b, +, c, d, +]
+|
+[^, (, (]
+[a, b, +, c, d, +, e]
+f
+[^, (, (, |]
+[a, b, +, c, d, +, e]
+)
+[^, (, (, |]
+[a, b, +, c, d, +, e, f]
+g
+[^, (]
+[a, b, +, c, d, +, e, f, |, (, )]
+|
+[^, (, +]
+[a, b, +, c, d, +, e, f, |, (, ), g]
+d
+[^, (, |]
+[a, b, +, c, d, +, e, f, |, (, ), g, +]
+)
+[^, (, |]
+[a, b, +, c, d, +, e, f, |, (, ), g, +, d]
+$
+[^]
+[a, b, +, c, d, +, e, f, |, (, ), g, +, d, |, (, )]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
