@@ -35,25 +35,43 @@ fun createReverseStack(regexString: String): String {
         opStack.add(char)
     }
 
-    fun whenRightBrace(char: Char) {
-        /* 優先順位の高いOpを再帰的にスタックから降ろして出力する */
+    fun popBraces() {
         val lastOp = opStack.pop()
         resultStack.add(lastOp)
-        if (lastOp == '(') {
-            resultStack.add(char)
-        } else {
-            whenRightBrace(char)
+        if (lastOp != '(') {
+            popBraces()
         }
     }
 
-    fun whenLeftBrace(char: Char) {
+//    fun whenRightBrace(char: Char) {
+//        /* 優先順位の高いOpを再帰的にスタックから降ろして出力する */
+//        val lastOp = opStack.pop()
+//        resultStack.add(lastOp)
+//        if (lastOp == '(') {
+//            resultStack.add(char)
+//        } else {
+//            whenRightBrace(char)
+//        }
+//    }
+
+    fun whenLeftBrace(char: Char, preChar: Char?) {
         /* 優先順位の高いOpを再帰的にスタックから降ろして出力する */
         popLeftBrace(char)
+        if (preChar != '(' && preChar != '^' && preChar != '|') {
+            opStack.add('_')
+        }
         opStack.add(char)
+    }
+
+    fun whenPreOperator(char: Char) {
+        resultStack.add(char)
     }
 
     fun whenSymbolChar(char: Char, preChar: Char?) {
         /* + opの処理 */
+        if (opStack.last() == ')') {
+            popBraces()
+        }
         if (preChar != '(' && preChar != '^' && preChar != '|') {
             whenOperator('_')
         }
@@ -67,11 +85,11 @@ fun createReverseStack(regexString: String): String {
         when (char) {
             '^' -> opStack.add(char)
             '$' -> whenOperator(char)
-            '*' -> whenOperator(char)
+            '*' -> whenPreOperator(char)
             '_' -> whenOperator(char)
             '|' -> whenOperator(char)
-            '(' -> whenLeftBrace(char)
-            ')' -> whenRightBrace(char)
+            '(' -> whenLeftBrace(char, preChar)
+            ')' -> whenOperator(char)
             in Regex("^[a-zA-Z]$") -> {
                 whenSymbolChar(char, preChar)
             }
