@@ -18,5 +18,5 @@ src配下でないと効かない。
 - [ ] IDEAのコード補完の設定
 - [ ] IDEAのデバグ設定   
 - [x] Functionの扱い
-- [ ] Dokkaの扱い
+- [ ] [Dokkaの扱い](https://kotlinlang.org/docs/reference/kotlin-doc.html)
 - [ ] Kotlinの型の扱い

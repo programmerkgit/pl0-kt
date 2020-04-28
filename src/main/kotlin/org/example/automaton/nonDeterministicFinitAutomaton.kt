@@ -8,16 +8,35 @@ class State(
 
 /* εによる移動を表現可能にする */
 /* 自分が変化しないようにロジックを書き換える */
+/**
+ * Create Non Deterministic Finite Automaton from regex char or string.
+ * @param[char] regex char
+ *
+ */
 class NFA(char: Char = ' ') {
+
+    init {
+        initializeNFA(char)
+    }
+
+    /**
+     * @constructor[string] create non deterministic finite automaton from regex string
+     */
+    constructor(string: String) : this() {
+        this.import(parseReversed(reverseRegex(string)))
+    }
 
     private val transitionFunctions: MutableMap<State, MutableMap<Char, MutableSet<State>>> = mutableMapOf()
     private val stateSet: MutableSet<State> = mutableSetOf()
-
 
     private fun getFinalState(): State {
         return checkNotNull(stateSet.find { it.isFinal })
     }
 
+    /**
+     * Create copy of this nfa.
+     * @return copied NFA
+     */
     private fun copy(): NFA {
         /* change state function's destination */
         val newNFA = NFA();
@@ -26,11 +45,19 @@ class NFA(char: Char = ' ') {
         return newNFA
     }
 
+    /**
+     * replace start state. State set and transition functions's states are replaced with [newState].
+     * @param[newState] newState.
+     */
     private fun replaceStartState(newState: State) {
         val startState = getStartState()
         replaceState(startState, newState)
     }
 
+    /**
+     * replace final state. State set and transition functions's states are replaced with [newState].
+     * @param[newState] newState.
+     */
     private fun replaceFinalState(newState: State) {
         val finalState = getFinalState()
         replaceState(finalState, newState)
@@ -81,9 +108,6 @@ class NFA(char: Char = ' ') {
         }
     }
 
-    init {
-        initializeNFA(char)
-    }
 
     private fun import(nfa: NFA): NFA {
         nfa.stateSet.forEach {
@@ -174,43 +198,4 @@ class NFA(char: Char = ' ') {
         copyOfInput.replaceFinalState(finalState)
         return copyOfThis.import(copyOfInput)
     }
-}
-
-fun parseReversed(text: String) {
-//    val stack: MutableList<NFA> = mutableListOf<NFA>()
-//    for (char: Char in text) {
-//        when (char) {
-//            '*' -> {
-//                val last = stack.removeAt(stack.lastIndex)
-//                stack.add(last.closure())
-//            }
-//            '_' -> {
-//                val b = stack.removeAt(stack.lastIndex)
-//                val a = stack.removeAt(stack.lastIndex)
-//                stack.add(a + b)
-//            }
-//            '|' -> {
-//                val b = stack.removeAt(stack.lastIndex)
-//                val a = stack.removeAt(stack.lastIndex)
-//                stack.add(a or b)
-//            }
-//            '(' -> {
-//                stack.removeAt(stack.lastIndex)
-//            }
-//            ')' -> {
-//                stack.removeAt(stack.lastIndex)
-//            }
-//            in Regex("^[a-zA-Z]$") -> {
-//                stack.add(NFA(char.toString()))
-//            }
-//        }
-//
-//    }
-}
-
-/* example */
-// val a = org.example.automaton.NFARegex("a") or org.example.automaton.NFARegex("b") + org.example.automaton.NFARegex("c").closure()
-
-fun main() {
-    println(NFA('a').closure() + NFA('b') or NFA('e'))
 }

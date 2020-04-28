@@ -9,7 +9,7 @@ fun greaterAThanB(a: Char, b: Char): Boolean {
 fun MutableList<Char>.pop() = this.removeAt(this.lastIndex)
 
 
-fun createReverseStack(regexString: String): String {
+fun reverseRegex(regexString: String): String {
 
     val targetText = "^$regexString$"
     val opStack: MutableList<Char> = mutableListOf()
@@ -43,17 +43,6 @@ fun createReverseStack(regexString: String): String {
             popBraces()
         }
     }
-
-//    fun whenRightBrace(char: Char) {
-//        /* 優先順位の高いOpを再帰的にスタックから降ろして出力する */
-//        val lastOp = opStack.pop()
-//        resultStack.add(lastOp)
-//        if (lastOp == '(') {
-//            resultStack.add(char)
-//        } else {
-//            whenRightBrace(char)
-//        }
-//    }
 
     fun whenLeftBrace(char: Char, preChar: Char?) {
         /* 優先順位の高いOpを再帰的にスタックから降ろして出力する */
