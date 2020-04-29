@@ -1,12 +1,13 @@
-B0: org.example.automaton.State@74144a77 start: false final: false
-B1: org.example.automaton.State@7767ed7f start: false final: false
-B2: org.example.automaton.State@679d1b4c start: false final: false
-A3: org.example.automaton.State@7c88f77f start: true final: false
-B4: org.example.automaton.State@648a0a54 start: false final: false
-A5: org.example.automaton.State@6e39b290 start: false final: true
-Rorg.example.automaton.State@7767ed7f: b => [org.example.automaton.State@679d1b4c]
-,c => [org.example.automaton.State@679d1b4c]
-yorg.example.automaton.State@679d1b4c: Ω => [org.example.automaton.State@7767ed7f, org.example.automaton.State@648a0a54]
-yorg.example.automaton.State@74144a77: Ω => [org.example.automaton.State@7767ed7f, org.example.automaton.State@648a0a54]
-Rorg.example.automaton.State@7c88f77f: a => [org.example.automaton.State@74144a77]
-Rorg.example.automaton.State@648a0a54: d => [org.example.automaton.State@6e39b290]
+state: 0: 
+state: 1: 
+state: 2: 
+state: 3: start
+state: 4: 
+state: 5: final
+f(1, b) => [2]
+f(1, c) => [2]
+f(2, Ω) => [1, 4]
+f(0, Ω) => [1, 4]
+f(3, a) => [0]
+f(4, d) => [5]
+

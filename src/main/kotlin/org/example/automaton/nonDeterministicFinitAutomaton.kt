@@ -1,6 +1,6 @@
 package org.example.automaton
 
-class State(
+open class State(
     var isStart: Boolean = false,
     var isFinal: Boolean = false
 ) {
@@ -9,25 +9,24 @@ class State(
 /* εによる移動を表現可能にする */
 /* 自分が変化しないようにロジックを書き換える */
 /**
- * Create Non Deterministic Finite Automaton from regex char or string.
+ * Non Deterministic Finite Automaton class.
  * @param[char] regex char
- *
  */
 class NFA(char: Char = ' ') {
+    private val transitionFunctions: MutableMap<State, MutableMap<Char, MutableSet<State>>> = mutableMapOf()
+    private val stateSet: MutableSet<State> = mutableSetOf()
 
     init {
         initializeNFA(char)
     }
 
     /**
-     * @constructor[string] create non deterministic finite automaton from regex string
+     * @constructor[regexString] from which NFA is created.
      */
-    constructor(string: String) : this() {
-        this.import(parseReversed(reverseRegex(string)))
+    constructor(regexString: String) : this() {
+        this.import(parseReversed(reverseRegex(regexString)))
     }
 
-    private val transitionFunctions: MutableMap<State, MutableMap<Char, MutableSet<State>>> = mutableMapOf()
-    private val stateSet: MutableSet<State> = mutableSetOf()
 
     private fun getFinalState(): State {
         return checkNotNull(stateSet.find { it.isFinal })
@@ -150,17 +149,49 @@ class NFA(char: Char = ' ') {
         return copyOfThis.import(copyOfInput)
     }
 
-    /* 表示方法を変えたい */
+    /**
+     * Display as human readble style
+     *
+     */
     override fun toString(): String {
+        class NumberedState(
+            val i: Int = 0,
+            isFinal: Boolean = false,
+            isStart: Boolean = false,
+            val state: State
+        ) :
+            State(isStart = isStart, isFinal = isFinal) {
+        }
+
         val states = stateSet.mapIndexed { i, state ->
-            "$i: $state start: ${state.isStart} final: ${state.isFinal}"
+            NumberedState(i, state.isFinal, state.isStart, state)
+        }.toSet()
+
+        val stateDescription = states.map { state ->
+            val preFix = when {
+                state.isStart -> {
+                    "start"
+                }
+                state.isFinal -> {
+                    "final"
+                }
+                else -> ""
+            }
+            "state: ${state.i}: $preFix"
         }.joinToString("\n")
-        val functions = transitionFunctions.map { stateFunctionMap ->
-            "${stateFunctionMap.key}: " + stateFunctionMap.value.map { map ->
-                "${map.key} => ${map.value}"
-            }.joinToString("\n")
-        }.joinToString("\n")
-        return "$states\n$functions"
+
+        var functionDescription = ""
+        transitionFunctions.forEach { (state, function) ->
+            val target = checkNotNull(states.find { it.state == state })
+            function.forEach { (input, gotoStateSet) ->
+                val stateMap = gotoStateSet.map { gotoState ->
+                    checkNotNull(states.find { it.state == gotoState }).i
+                }
+
+                functionDescription += "f(${target.i}, $input) => ${stateMap}\n"
+            }
+        }
+        return "$stateDescription\n$functionDescription"
     }
 
     fun closure(): NFA {
@@ -199,3 +230,4 @@ class NFA(char: Char = ' ') {
         return copyOfThis.import(copyOfInput)
     }
 }
+

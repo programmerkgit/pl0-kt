@@ -44,6 +44,6 @@ class NFATest {
     fun testNFA() {
         val pattern = "a(b|c)*d"
         val expected = "abc|*)(_d_"
-        println(NFA(pattern).toString())
+        println(NFA(pattern))
     }
 }

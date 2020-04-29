@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="org.example.automaton.NFATest" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-04-28T14:49:34" hostname="keishis-iMac.local" time="0.036">
+<testsuite name="org.example.automaton.NFATest" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-04-29T03:15:24" hostname="keishis-iMac.local" time="4.943">
   <properties/>
-  <testcase name="testNFA" classname="org.example.automaton.NFATest" time="0.036"/>
-  <system-out><![CDATA[0: org.example.automaton.State@74144a77 start: false final: false
-1: org.example.automaton.State@7767ed7f start: false final: false
-2: org.example.automaton.State@679d1b4c start: false final: false
-3: org.example.automaton.State@7c88f77f start: true final: false
-4: org.example.automaton.State@648a0a54 start: false final: false
-5: org.example.automaton.State@6e39b290 start: false final: true
-org.example.automaton.State@7767ed7f: b => [org.example.automaton.State@679d1b4c]
-c => [org.example.automaton.State@679d1b4c]
-org.example.automaton.State@679d1b4c: Ω => [org.example.automaton.State@7767ed7f, org.example.automaton.State@648a0a54]
-org.example.automaton.State@74144a77: Ω => [org.example.automaton.State@7767ed7f, org.example.automaton.State@648a0a54]
-org.example.automaton.State@7c88f77f: a => [org.example.automaton.State@74144a77]
-org.example.automaton.State@648a0a54: d => [org.example.automaton.State@6e39b290]
+  <testcase name="testNFA" classname="org.example.automaton.NFATest" time="4.943"/>
+  <system-out><![CDATA[state: 0: 
+state: 1: 
+state: 2: 
+state: 3: start
+state: 4: 
+state: 5: final
+f(1, b) => [2]
+f(1, c) => [2]
+f(2, Ω) => [1, 4]
+f(0, Ω) => [1, 4]
+f(3, a) => [0]
+f(4, d) => [5]
+
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -1,7 +1,9 @@
-$dokka.format:markdown
-$dokka.linkExtension:md
-
+$dokka.format:html
+$dokka.linkExtension:html
+$dokka.location:org.example.automaton$contains(kotlin.text.Regex, kotlin.Char)org.example.automaton/kotlin.text.-regex/contains.html
+$dokka.location:org.example.automaton$pop(kotlin.collections.MutableList((kotlin.Char)))org.example.automaton/kotlin.collections.-mutable-list/pop.html
 org.example
+org.example.automaton
 org.example.easyCompiler
 org.example.token
 org.example.training

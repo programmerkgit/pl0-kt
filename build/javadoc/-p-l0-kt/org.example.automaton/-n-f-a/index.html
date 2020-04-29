@@ -1,0 +1,65 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>NFA - PL0-kt</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">PL0-kt</a>&nbsp;/&nbsp;<a href="../index.html">org.example.automaton</a>&nbsp;/&nbsp;<a href="./index.html">NFA</a><br/>
+<br/>
+<h1>NFA</h1>
+<code><span class="keyword">class </span><span class="identifier">NFA</span></code>
+<p>Create Non Deterministic Finite Automaton from regex char or string.</p>
+<h3>Parameters</h3>
+<p><a name="char"></a>
+<code>char</code> - regex char</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<p><a href="-init-.html#org.example.automaton.NFA$<init>(kotlin.String)/string">string</a> create non deterministic finite automaton from regex string</p>
+<code><span class="identifier">NFA</span><span class="symbol">(</span><span class="identifier" id="org.example.automaton.NFA$<init>(kotlin.String)/string">string</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span></code>
+<p>Create Non Deterministic Finite Automaton from regex char or string.</p>
+<code><span class="identifier">NFA</span><span class="symbol">(</span><span class="identifier" id="org.example.automaton.NFA$<init>(kotlin.Char)/char">char</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-char/index.html"><span class="identifier">Char</span></a>&nbsp;<span class="symbol">=</span>&nbsp;' '<span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="closure.html">closure</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">closure</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">NFA</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="or.html">or</a></h4>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><span class="identifier">or</span><span class="symbol">(</span><span class="identifier" id="org.example.automaton.NFA$or(org.example.automaton.NFA)/nfa">nfa</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">NFA</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">NFA</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="plus.html">plus</a></h4>
+</td>
+<td>
+<code><span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">plus</span><span class="symbol">(</span><span class="identifier" id="org.example.automaton.NFA$plus(org.example.automaton.NFA)/nfa">nfa</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">NFA</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">NFA</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="to-string.html">toString</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toString</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
