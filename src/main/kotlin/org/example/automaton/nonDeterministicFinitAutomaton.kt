@@ -13,28 +13,47 @@ open class State(
  * @param[char] regex char
  */
 class NFA(char: Char = ' ') {
-    private val transitionFunctions: MutableMap<State, MutableMap<Char, MutableSet<State>>> = mutableMapOf()
-    private val stateSet: MutableSet<State> = mutableSetOf()
+    val transitionFunctions: MutableMap<State, MutableMap<Char, MutableSet<State>>> = mutableMapOf()
+    val stateList: MutableList<State> = mutableListOf()
 
     init {
         initializeNFA(char)
     }
 
     /**
-     * @constructor[regexString] from which NFA is created.
+     * @constructor[regexString] from which org.example.automaton.NFA is created.
      */
     constructor(regexString: String) : this() {
-        this.import(parseReversed(reverseRegex(regexString)))
+        import(parseReversed(reverseRegex(regexString)))
     }
 
+    private fun addState(state: State) {
+        if (stateList.indexOf(state) == -1) {
+            when {
+                state.isStart -> {
+                    stateList.add(0, state)
+                }
+                state.isFinal -> {
+                    stateList.add(state)
+                }
+                else -> {
+                    if (stateList.last().isFinal) {
+                        stateList.add(stateList.lastIndex, state)
+                    } else {
+                        stateList.add(state)
+                    }
+                }
+            }
+        }
+    }
 
     private fun getFinalState(): State {
-        return checkNotNull(stateSet.find { it.isFinal })
+        return checkNotNull(stateList.find { it.isFinal })
     }
 
     /**
      * Create copy of this nfa.
-     * @return copied NFA
+     * @return copied org.example.automaton.NFA
      */
     private fun copy(): NFA {
         /* change state function's destination */
@@ -45,7 +64,7 @@ class NFA(char: Char = ' ') {
     }
 
     /**
-     * replace start state. State set and transition functions's states are replaced with [newState].
+     * replace start state. org.example.automaton.State set and transition functions's states are replaced with [newState].
      * @param[newState] newState.
      */
     private fun replaceStartState(newState: State) {
@@ -54,7 +73,7 @@ class NFA(char: Char = ' ') {
     }
 
     /**
-     * replace final state. State set and transition functions's states are replaced with [newState].
+     * replace final state. org.example.automaton.State set and transition functions's states are replaced with [newState].
      * @param[newState] newState.
      */
     private fun replaceFinalState(newState: State) {
@@ -62,26 +81,34 @@ class NFA(char: Char = ' ') {
         replaceState(finalState, newState)
     }
 
-    private fun replaceState(replacedState: State, newState: State) {
+    private fun replaceStateList(olsState: State, newState: State) {
+        if (stateList.remove(olsState)) {
+            addState(newState)
+        }
+    }
+
+    private fun replaceStateSet(stateSet: MutableSet<State>, oldState: State, newState: State) {
+        if (stateSet.remove(oldState)) {
+            stateSet.add(newState)
+        }
+    }
+
+    private fun replaceState(oldState: State, newState: State) {
         /* change key of mapping */
         transitionFunctions.forEach { (_, raw) ->
             raw.forEach { (_, stateSet) ->
-                if (stateSet.remove(replacedState)) {
-                    stateSet.add(newState)
-                }
+                replaceStateSet(stateSet, oldState, newState)
             }
         }
-        val function = transitionFunctions.remove(replacedState)
+        val function = transitionFunctions.remove(oldState)
         if (function != null) {
             transitionFunctions[newState] = function
         }
-        /* change state set */
-        stateSet.remove(replacedState)
-        stateSet.add(newState)
+        replaceStateList(oldState, newState)
     }
 
     private fun getStartState(): State {
-        return checkNotNull(stateSet.find {
+        return checkNotNull(stateList.find {
             it.isStart
         })
     }
@@ -91,15 +118,15 @@ class NFA(char: Char = ' ') {
             in Regex("[a-zA-Z]") -> {
                 val startState = State(isStart = true)
                 val finalState = State(isFinal = true)
-                stateSet.add(startState)
-                stateSet.add(finalState)
+                addState(startState)
+                addState(finalState)
                 transitionFunctions[startState] = mutableMapOf(char to mutableSetOf(finalState))
             }
             'Ω' -> {
                 val startState = State(isStart = true)
                 val finalState = State(isFinal = true)
-                stateSet.add(startState)
-                stateSet.add(finalState)
+                addState(startState)
+                addState(finalState)
                 transitionFunctions[startState] = mutableMapOf('Ω' to mutableSetOf(finalState))
             }
             ' ' -> {
@@ -109,8 +136,8 @@ class NFA(char: Char = ' ') {
 
 
     private fun import(nfa: NFA): NFA {
-        nfa.stateSet.forEach {
-            stateSet.add(it)
+        nfa.stateList.forEach {
+            addState(it)
         }
         nfa.transitionFunctions.forEach { (keyState, raw) ->
             if (transitionFunctions[keyState] === null) {
@@ -154,20 +181,8 @@ class NFA(char: Char = ' ') {
      *
      */
     override fun toString(): String {
-        class NumberedState(
-            val i: Int = 0,
-            isFinal: Boolean = false,
-            isStart: Boolean = false,
-            val state: State
-        ) :
-            State(isStart = isStart, isFinal = isFinal) {
-        }
 
-        val states = stateSet.mapIndexed { i, state ->
-            NumberedState(i, state.isFinal, state.isStart, state)
-        }.toSet()
-
-        val stateDescription = states.map { state ->
+        val stateDescription = stateList.mapIndexed { i, state ->
             val preFix = when {
                 state.isStart -> {
                     "start"
@@ -177,18 +192,17 @@ class NFA(char: Char = ' ') {
                 }
                 else -> ""
             }
-            "state: ${state.i}: $preFix"
+            "state: ${i}: $preFix"
         }.joinToString("\n")
 
         var functionDescription = ""
         transitionFunctions.forEach { (state, function) ->
-            val target = checkNotNull(states.find { it.state == state })
+            val target = checkNotNull(stateList.indexOf(state))
             function.forEach { (input, gotoStateSet) ->
                 val stateMap = gotoStateSet.map { gotoState ->
-                    checkNotNull(states.find { it.state == gotoState }).i
+                    checkNotNull(stateList.indexOf(gotoState))
                 }
-
-                functionDescription += "f(${target.i}, $input) => ${stateMap}\n"
+                functionDescription += "f(${target}, $input) => ${stateMap}\n"
             }
         }
         return "$stateDescription\n$functionDescription"
@@ -201,13 +215,13 @@ class NFA(char: Char = ' ') {
         val state1: State = State()
         val state2: State = State()
         val endState: State = State(isFinal = true)
-        nfa.stateSet.add(startState)
-        nfa.stateSet.add(state1)
-        nfa.stateSet.add(state2)
-        nfa.stateSet.add(endState)
+        nfa.addState(startState)
+        nfa.addState(state1)
+        nfa.addState(state2)
+        nfa.addState(endState)
         val startStateRaw = mutableMapOf('Ω' to mutableSetOf<State>(endState, state1))
         val state1Raw = mutableMapOf<Char, MutableSet<State>>()
-        val state2Raw = mutableMapOf<Char, MutableSet<State>>('Ω' to mutableSetOf<State>(state1, endState))
+        val state2Raw = mutableMapOf('Ω' to mutableSetOf(state1, endState))
         val endStateRow = mutableMapOf<Char, MutableSet<State>>()
         nfa.transitionFunctions[startState] = startStateRaw
         nfa.transitionFunctions[state1] = state1Raw
@@ -221,13 +235,19 @@ class NFA(char: Char = ' ') {
     infix fun or(nfa: NFA): NFA {
         val copyOfThis = copy()
         val copyOfInput = nfa.copy()
-        val startState: State = State(isStart = true)
-        val finalState: State = State(isFinal = true)
+        val startState = State(isStart = true)
+        val finalState = State(isFinal = true)
         copyOfThis.replaceStartState(startState)
         copyOfThis.replaceFinalState(finalState)
         copyOfInput.replaceStartState(startState)
         copyOfInput.replaceFinalState(finalState)
         return copyOfThis.import(copyOfInput)
     }
+}
+
+fun main() {
+    val pattern = "a(b|c)*e"
+    val nfa = NFA(pattern)
+    println(nfa)
 }
 

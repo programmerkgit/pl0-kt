@@ -1,6 +1,5 @@
 package org.example.automaton
 
-import org.jetbrains.annotations.NotNull
 
 fun parseReversed(text: String): NFA {
     val stack: MutableList<NFA> = mutableListOf<NFA>()
