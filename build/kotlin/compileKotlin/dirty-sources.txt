@@ -1,0 +1,3 @@
+/Users/admin/IdeaProjects/PL0-kt/src/main/kotlin/org/example/automaton/dfa.kt
+/Users/admin/IdeaProjects/PL0-kt/src/main/kotlin/org/example/automaton/nfa.kt
+/Users/admin/IdeaProjects/PL0-kt/src/main/kotlin/org/example/automaton/nfaState.kt
