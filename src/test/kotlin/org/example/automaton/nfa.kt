@@ -46,7 +46,6 @@ class NFATest {
     fun testNFA() {
         val pattern = "a(b|c)*d"
         val expected = "abc|*)(_d_"
-        println(NFA(pattern))
     }
 
     @Test
@@ -55,9 +54,28 @@ class NFATest {
         val nfa = NFA(pattern)
         val stateList = nfa.stateList
         val state = stateList[1]
-        val set = nfa.findNullMoveStatesSet(state)
-        println(nfa)
+        val set = nfa.getNullMoveStatesSet(state)
         assertEquals(set, setOf(state, nfa.getFinalState(), stateList[2]))
+    }
+
+    @Test
+    fun getNullMoveStateSet() {
+        val pattern = "ab*"
+        val nfa = NFA(pattern)
+        val stateList = nfa.stateList
+        val state = stateList[0]
+        val set = nfa.getNullMoveStatesSet(nfa.getGotoStateSet(state, 'a'))
+        assertEquals(set, setOf(stateList[1], stateList[2], stateList[4]))
+    }
+
+    @Test
+    fun getGotoStateSet() {
+        val pattern = "ab*"
+        val nfa = NFA(pattern)
+        val stateList = nfa.stateList
+        val state = stateList[0]
+        val set = nfa.getGotoStateSet(state, 'a')
+        assertEquals(set, setOf(stateList[1]))
     }
 
 }

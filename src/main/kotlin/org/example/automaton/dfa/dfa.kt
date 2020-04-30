@@ -19,13 +19,6 @@ class DFA(char: Char = ' ') {
         initializeDFA(char)
     }
 
-    /**
-     * @constructor[regexString] from which org.example.automaton.dfa.DFA is created.
-     */
-    constructor(regexString: String) : this() {
-        import(parseReversed(reverseRegex(regexString)))
-    }
-
     private fun addState(state: NFAState) {
         if (stateList.indexOf(state) == -1) {
             when {

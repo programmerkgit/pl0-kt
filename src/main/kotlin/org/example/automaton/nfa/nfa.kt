@@ -1,5 +1,7 @@
 package org.example.automaton.nfa
 
+import javax.swing.plaf.nimbus.State
+
 /* εによる移動を表現可能にする */
 /* 自分が変化しないようにロジックを書き換える */
 /**
@@ -10,6 +12,9 @@ class NFA(char: Char = ' ') {
     val transitionFunctions: MutableMap<NFAState, MutableMap<Char, MutableSet<NFAState>>> = mutableMapOf()
     val stateList: MutableList<NFAState> = mutableListOf()
 
+    /* inputsをRegexを読み込んだタイミングで生成する必要がある */
+    val inputs: MutableSet<Char> = mutableSetOf()
+
     init {
         initializeNFA(char)
     }
@@ -19,11 +24,7 @@ class NFA(char: Char = ' ') {
      */
     constructor(regexString: String) : this() {
         import(
-            parseReversed(
-                reverseRegex(
-                    regexString
-                )
-            )
+            parseReversed(reverseRegex(regexString))
         )
     }
 
@@ -122,12 +123,12 @@ class NFA(char: Char = ' ') {
                 addState(finalState)
                 transitionFunctions[startState] = mutableMapOf(char to mutableSetOf(finalState))
             }
-            'Ω' -> {
+            'ε' -> {
                 val startState = NFAState(isStart = true)
                 val finalState = NFAState(isFinal = true)
                 addState(startState)
                 addState(finalState)
-                transitionFunctions[startState] = mutableMapOf('Ω' to mutableSetOf(finalState))
+                transitionFunctions[startState] = mutableMapOf('ε' to mutableSetOf(finalState))
             }
             ' ' -> {
             }
@@ -226,9 +227,9 @@ class NFA(char: Char = ' ') {
         nfa.addState(state1)
         nfa.addState(state2)
         nfa.addState(endState)
-        val startStateRaw = mutableMapOf('Ω' to mutableSetOf<NFAState>(endState, state1))
+        val startStateRaw = mutableMapOf('ε' to mutableSetOf<NFAState>(endState, state1))
         val state1Raw = mutableMapOf<Char, MutableSet<NFAState>>()
-        val state2Raw = mutableMapOf('Ω' to mutableSetOf(state1, endState))
+        val state2Raw = mutableMapOf('ε' to mutableSetOf(state1, endState))
         val endStateRow = mutableMapOf<Char, MutableSet<NFAState>>()
         nfa.transitionFunctions[startState] = startStateRaw
         nfa.transitionFunctions[state1] = state1Raw
@@ -237,6 +238,30 @@ class NFA(char: Char = ' ') {
         copyOfThis.replaceStartState(state1)
         copyOfThis.replaceFinalState(state2)
         return nfa.import(copyOfThis)
+    }
+
+    fun toDNA() {
+        val newStateList: MutableList<Set<NFAState>> = mutableListOf()
+        val newTransitionFunctions = mutableMapOf<Set<NFAState>, MutableMap<Char, Set<NFAState>>>()
+        val firstState = getStartState()
+        val next = getNullMoveStatesSet(firstState)
+        newStateList.add(next)
+        var i = 0;
+        while (i < newStateList.size) {
+            inputs.forEach() {
+                /* TODO: ロジックを綺麗にしたい */
+                /* check if added or not */
+                val newSet = getNullMoveStatesSet(getGotoStateSet(newStateList[i], it))
+                /* transition functionに追加 */
+                newTransitionFunctions.getOrPut(newStateList[i]) { mutableMapOf() }[it] = newSet
+                if (newStateList.indexOf(newSet) == -1) {
+                    newStateList.add(newSet)
+                }
+            }
+            i++
+        }
+        println(newStateList)
+        println(newTransitionFunctions)
     }
 
     infix fun or(nfa: NFA): NFA {
@@ -251,15 +276,36 @@ class NFA(char: Char = ' ') {
         return copyOfThis.import(copyOfInput)
     }
 
-    fun findNullMoveStatesSet(state: NFAState): Set<NFAState> {
-        val row = this.transitionFunctions[state]
-        return (row?.get('Ω') ?: setOf<NFAState>()) + state
+    /**
+     * get state set which can be moved from [state] with ε.
+     * @param[state] base state.
+     */
+    fun getNullMoveStatesSet(state: NFAState): Set<NFAState> {
+        return (getGotoStateSet(state, 'ε')) + state
+    }
+
+    /**
+     *  get state set which can be moved from [stateSet] with ε.
+     * @param[stateSet] Base State.
+     */
+    fun getNullMoveStatesSet(stateSet: Set<NFAState>): Set<NFAState> {
+        return getGotoStateSet(stateSet, 'ε') + stateSet
+    }
+
+    fun getGotoStateSet(stateSet: Set<NFAState>, input: Char): Set<NFAState> {
+        return stateSet.fold(setOf()) { acc, nfaState ->
+            acc + getGotoStateSet(nfaState, input)
+        }
+    }
+
+    fun getGotoStateSet(state: NFAState, input: Char): MutableSet<NFAState> {
+        return transitionFunctions[state]?.get(input) ?: mutableSetOf()
     }
 }
 
 fun main() {
     val pattern = "a(b|c)*e"
     val nfa = NFA(pattern)
-    println(nfa)
+    println(nfa.toDNA())
 }
 
