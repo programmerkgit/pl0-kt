@@ -23,6 +23,10 @@ fun parseReversed(text: String): NFA {
             }
             ')' -> {
             }
+            '+' -> {
+                val last = stack.removeAt(stack.lastIndex)
+                stack.add(last.positiveClosure())
+            }
             in Regex("^[a-zA-Z]$") -> {
                 stack.add(NFA(char))
             }

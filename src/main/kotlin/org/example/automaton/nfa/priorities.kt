@@ -8,6 +8,7 @@ val priorities = mapOf<Char, Int>(
     '|' to 4,
     '_' to 5, //ab => a_bと解釈
     '*' to 6,
-    '?' to 6
+    '?' to 6,
+    '+' to 6
 )
 

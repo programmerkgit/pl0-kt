@@ -26,10 +26,9 @@ class DFA(
         var count = 1
         stateList.forEach {
             when {
-                it.isFinal -> it.id = "f"
                 it.isStart -> it.id = "i"
                 else -> {
-                    it.id = count.toString()
+                    it.id = count.toString() + if (it.isFinal) "f" else ""
                     count++
                 }
             }

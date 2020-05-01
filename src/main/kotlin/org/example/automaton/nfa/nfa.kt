@@ -246,6 +246,10 @@ class NFA(char: Char = ' ') : Automaton<NFAState>() {
         return nfa.import(copyOfThis)
     }
 
+    fun positiveClosure(): NFA {
+        return copy() + copy().closure()
+    }
+
     fun setStateNumbers() {
         var count = 1
         stateList.forEach {
@@ -353,11 +357,8 @@ class NFA(char: Char = ' ') : Automaton<NFAState>() {
 }
 
 fun main() {
-    val nfa1 = NFA("ab|bc")
-    val nfa2 = NFA("ab") or NFA("bc")
+    val nfa1 = NFA("ab+")
     println("NFA1")
-    println(nfa1)
-    println("NFA2")
-    println(nfa2)
+    println(nfa1.toDFA())
 }
 

@@ -77,6 +77,7 @@ fun reverseRegex(regexString: String): String {
             '$' -> whenOperator(char)
             '*' -> whenPreOperator(char)
             '_' -> whenOperator(char)
+            '+' -> whenOperator(char)
             '|' -> whenOperator(char)
             '(' -> whenLeftBrace(char, preChar)
             ')' -> whenOperator(char)
