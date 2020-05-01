@@ -1,11 +1,12 @@
 package org.example.automaton.dfa
 
-import org.example.automaton.State
+import org.example.automaton.AutomatonState
+import org.example.automaton.nfa.NFAState
 
 class DFAState(
-    val stateSet: MutableSet<State> = mutableSetOf(),
+    val stateSet: Set<NFAState> = mutableSetOf(),
     isStart: Boolean = false,
     isFinal: Boolean = false
-) : State(isStart, isFinal) {
+) : AutomatonState(isStart, isFinal) {
 
 }

@@ -1,9 +1,9 @@
 package org.example.automaton.nfa
 
-import org.example.automaton.State
+import org.example.automaton.AutomatonState
 
 open class NFAState(
     isStart: Boolean = false,
     isFinal: Boolean = false
-) : State(isStart, isFinal) {
+) : AutomatonState(isStart, isFinal) {
 }
