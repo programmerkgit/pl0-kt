@@ -1,9 +1,5 @@
 package org.example.automaton.dfa
 
-import org.example.automaton.nfa.NFAState
-import org.example.automaton.nfa.contains
-import org.example.automaton.nfa.parseReversed
-import org.example.automaton.nfa.reverseRegex
 
 /* εによる移動を表現可能にする */
 /* 自分が変化しないようにロジックを書き換える */

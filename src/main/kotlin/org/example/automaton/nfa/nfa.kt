@@ -5,30 +5,58 @@ import org.example.automaton.Automaton
 import org.example.automaton.dfa.DFA
 import org.example.automaton.dfa.DFAState
 
+
+private fun toNFA(pattern: String): NFA {
+    if (pattern.isEmpty())
+        return NFA('ε')
+    val postFix = toPostFix(preprocessPattern(pattern))
+    val stack = mutableListOf<NFA>()
+    postFix.forEach { c ->
+        when (c) {
+            in setOf('+', '*', '?') -> {
+                val top = stack.removeAt(stack.lastIndex)
+                when (c) {
+                    '+' -> stack.add(top.positiveClosure())
+                    '*' -> stack.add(top.closure())
+                    '?' -> stack.add(top.nullable())
+                }
+            }
+            in setOf('|', '.') -> {
+                val b = stack.removeAt(stack.lastIndex)
+                val a = stack.removeAt(stack.lastIndex)
+                when (c) {
+                    '|' -> stack.add(a or b)
+                    '.' -> stack.add(a + b)
+                }
+            }
+            else -> {
+                stack.add(NFA(c))
+            }
+        }
+    }
+    return stack.last()
+}
+
 /* εによる移動を表現可能にする */
 /* 自分が変化しないようにロジックを書き換える */
 /**
  * Non Deterministic Finite Automaton class.
  * @param[char] regex char
  */
-class NFA(char: Char = ' ') : Automaton<NFAState>() {
+class NFA(char: Char? = null) : Automaton<NFAState>() {
     override val transitionFunctions: MutableMap<NFAState, MutableMap<Char, MutableSet<NFAState>>> = mutableMapOf()
     override val stateList: MutableList<NFAState> = mutableListOf()
 
     /* inputsをRegexを読み込んだタイミングで生成する必要がある */
     override val inputs: MutableSet<Char> = mutableSetOf('ε')
 
-    init {
-        initializeNFA(char)
+    init { initializeNFA(char) }
+    constructor(pattern: String) : this() {
+        import(toNFA(pattern))
     }
 
-    /**
-     * @constructor[regexString] from which org.example.automaton.nfa.NFA is created.
-     */
-    constructor(regexString: String) : this() {
-        import(
-            parseReversed(reverseRegex(regexString))
-        )
+    fun nullable(): NFA {
+        return this or NFA('ε')
     }
 
     private fun addState(state: NFAState) {
@@ -60,7 +88,7 @@ class NFA(char: Char = ' ') : Automaton<NFAState>() {
 
     /**
      * Create copy of this nfa.
-     * @return copied org.example.automaton.nfa.NFA
+     * @return copied org.example.automaton.nfa.org.example.automaton.nfa2.NFA
      */
     private fun copy(): NFA {
         /* change state function's destination */
@@ -120,16 +148,8 @@ class NFA(char: Char = ' ') : Automaton<NFAState>() {
         })
     }
 
-    private fun initializeNFA(char: Char) {
+    private fun initializeNFA(char: Char?) {
         when (char) {
-            in Regex("[a-zA-Z]") -> {
-                val startState = NFAState(isStart = true)
-                val finalState = NFAState(isFinal = true)
-                addState(startState)
-                addState(finalState)
-                inputs.add(char)
-                transitionFunctions[startState] = mutableMapOf(char to mutableSetOf(finalState))
-            }
             'ε' -> {
                 val startState = NFAState(isStart = true)
                 val finalState = NFAState(isFinal = true)
@@ -138,7 +158,16 @@ class NFA(char: Char = ' ') : Automaton<NFAState>() {
                 inputs.add(char)
                 transitionFunctions[startState] = mutableMapOf('ε' to mutableSetOf(finalState))
             }
-            ' ' -> {
+            null -> {
+
+            }
+            else -> {
+                val startState = NFAState(isStart = true)
+                val finalState = NFAState(isFinal = true)
+                addState(startState)
+                addState(finalState)
+                inputs.add(char)
+                transitionFunctions[startState] = mutableMapOf(char to mutableSetOf(finalState))
             }
         }
     }
@@ -194,7 +223,7 @@ class NFA(char: Char = ' ') : Automaton<NFAState>() {
      *
      */
     override fun toString(): String {
-        val header = "NFA"
+        val header = "org.example.automaton.nfa2.NFA"
         val stateDescription = "State: " + stateList.joinToString(" ") { it.id }
 
         val maxColSize: Int = transitionFunctions.map { (_, m) ->
@@ -357,8 +386,8 @@ class NFA(char: Char = ' ') : Automaton<NFAState>() {
 }
 
 fun main() {
-    val nfa1 = NFA("ab+")
+    val nfa = NFA("a?b+")
     println("NFA1")
-    println(nfa1.toDFA())
+    println(nfa)
 }
 
