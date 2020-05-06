@@ -1,7 +1,5 @@
 package org.example.automaton.nfa
 
-import java.util.regex.Pattern
-
 
 private fun toNFA2(pattern: String): NFA2 {
     if (pattern.isEmpty())
@@ -42,10 +40,19 @@ class State2(
 ) {
     fun copy(): State2 {
         val newState = State2(isStart, isFinal)
+        /* destination states should not change */
         transitions.forEach { char, states ->
-            newState.transitions[char] = states.map { it.copy() }.toMutableList()
+            newState.transitions[char] = states
         }
         return newState
+    }
+
+    fun goTo(char: Char): List<State2> {
+        return if (char == 'ε') {
+            transitions.getOrDefault(char, mutableListOf()) + this
+        } else {
+            transitions.getOrDefault(char, mutableListOf())
+        }
     }
 }
 
@@ -173,4 +180,44 @@ class NFA2(char: Char? = null) {
     fun positiveClosure(): NFA2 {
         return this + closure()
     }
+
+    fun toDFA(): DFA2 {
+        val startList = startState().goTo('ε')
+        val dfaStart = DFAState2(isStart = true, stateList = startList)
+        val dfaStateList = mutableListOf(dfaStart)
+        var i = 0;
+        while (i < dfaStateList.size) {
+            val currentState = dfaStateList[i]
+            inputs().forEach { c ->
+                val nextList = currentState.stateList.flatMap { s ->
+                    s.goTo(c).flatMap {
+                        it.goTo('ε')
+                    }
+                }
+                val isFinal = nextList.any { it.isFinal }
+                val nextDFAState = dfaStateList.find { it.stateList == stateList } ?: DFAState2(
+                    isFinal = isFinal,
+                    stateList = nextList
+                )
+                currentState.transitions[c] = nextDFAState
+                dfaStateList.add(nextDFAState)
+            }
+            i++
+        }
+        return DFA2(dfaStateList)
+    }
+
+}
+
+
+class DFAState2(
+    var isStart: Boolean = false,
+    var isFinal: Boolean = false,
+    var transitions: MutableMap<Char, DFAState2> = mutableMapOf(),
+    var stateList: List<State2> = listOf()
+) {
+}
+
+
+class DFA2(var stateList: MutableList<DFAState2> = mutableListOf()) {
 }
