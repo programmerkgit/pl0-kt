@@ -25,7 +25,7 @@ enum class KeyId {
 abstract class Token(val kind: KeyId)
 class KeywordToken(val keyId: KeyId) : Token(keyId)
 class NumToken(val value: Int) : Token(KeyId.Num)
-class IdentifierToken(val name: String) : Token(KeyId.Identifier)
+class IdentifierToken(val id: String) : Token(KeyId.Identifier)
 
 object CharClassMap {
     private val map = mutableMapOf<Char, KeyId>()
@@ -133,16 +133,16 @@ fun nextToken(): Token {
         }
         KeyId.Lss -> {
             ch = nextChar()
-            when (ch) {
+            return when (ch) {
                 '=' -> {
                     ch = nextChar()
-                    return KeywordToken(KeyId.LssEq)
+                    KeywordToken(KeyId.LssEq)
                 }
                 '>' -> {
                     ch = nextChar()
-                    return KeywordToken(KeyId.NotEq)
+                    KeywordToken(KeyId.NotEq)
                 }
-                else -> return KeywordToken(KeyId.Lss)
+                else -> KeywordToken(KeyId.Lss)
             }
         }
         KeyId.Gtr -> {

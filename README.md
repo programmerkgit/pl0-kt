@@ -20,3 +20,9 @@ src配下でないと効かない。
 - [x] Functionの扱い
 - [ ] [Dokkaの扱い](https://kotlinlang.org/docs/reference/kotlin-doc.html)
 - [ ] Kotlinの型の扱い
+
+## Pl-0
+- [ ] Blockの扱い 
+- [ ] Tokenizer Classを作る
+- [ ] Table Class
+- [ ] 環境変数の扱いを考える
