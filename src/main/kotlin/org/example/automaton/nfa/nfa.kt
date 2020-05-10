@@ -99,7 +99,7 @@ class NFA(char: Char? = null) : Automaton<NFAState>() {
     }
 
     /**
-     * replace start state. org.example.automaton.nfa.org.example.automaton.State set and transition functions's states are replaced with [newState].
+     * replace start state. org.example.automaton.nfa.org.example.automaton.org.example.automaton2.State set and transition functions's states are replaced with [newState].
      * @param[newState] newState.
      */
     private fun replaceStartState(newState: NFAState) {
@@ -108,7 +108,7 @@ class NFA(char: Char? = null) : Automaton<NFAState>() {
     }
 
     /**
-     * replace final state. org.example.automaton.nfa.org.example.automaton.State set and transition functions's states are replaced with [newState].
+     * replace final state. org.example.automaton.nfa.org.example.automaton.org.example.automaton2.State set and transition functions's states are replaced with [newState].
      * @param[newState] newState.
      */
     private fun replaceFinalState(newState: NFAState) {
@@ -224,7 +224,7 @@ class NFA(char: Char? = null) : Automaton<NFAState>() {
      */
     override fun toString(): String {
         val header = "org.example.automaton.nfa2.NFA"
-        val stateDescription = "State: " + stateList.joinToString(" ") { it.id }
+        val stateDescription = "org.example.automaton2.State: " + stateList.joinToString(" ") { it.id }
 
         val maxColSize: Int = transitionFunctions.map { (_, m) ->
             m.map { it.value.size }.maxBy { it } ?: 0
@@ -356,7 +356,7 @@ class NFA(char: Char? = null) : Automaton<NFAState>() {
 
     /**
      *  get state set which can be moved from [stateSet] with ε.
-     * @param[stateSet] Base State.
+     * @param[stateSet] Base org.example.automaton2.State.
      */
     fun getNullMoveStatesSet(stateSet: Set<NFAState>): Set<NFAState> {
         return getGotoStateSet(stateSet, 'ε')

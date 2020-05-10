@@ -1,4 +1,4 @@
-package org.example.automaton.nfa
+package org.example.automaton2
 
 /**
  * convert "a.b.(c.d|e.f)*" to "ab.cd.ef.|*."
@@ -7,7 +7,7 @@ package org.example.automaton.nfa
  */
 fun toPostFix(pattern: String): String {
     var output = ""
-    val opStack = mutableListOf<Char>()
+    val opStack: MutableList<Char> = mutableListOf()
     fun popStack(c: Char) {
         if (opStack.isEmpty()) return
         val top = opStack.last()

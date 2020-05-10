@@ -34,7 +34,7 @@ class DFA(
 
     override fun toString(): String {
         val header = "DFA"
-        val stateDescription = "State: " + stateList.joinToString(" ") { DFAState ->
+        val stateDescription = "org.example.automaton2.State: " + stateList.joinToString(" ") { DFAState ->
             "${DFAState.id}:(${DFAState.stateSet.joinToString(",") { it.id }})"
         }
 

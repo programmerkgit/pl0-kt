@@ -26,3 +26,27 @@ src配下でないと効かない。
 - [ ] Tokenizer Classを作る
 - [ ] Table Class
 - [ ] 環境変数の扱いを考える
+
+## Lex
+- [ ] How Token is defined by lex ?
+- [ ] Action is not used by yacc.  
+- [ ] BNF
+- [ ] Automaton
+- [ ] How lex is created
+## BNF
+- [ ] How comments are defined
+- [ ] How string is defined
+
+## Opcodes
+- [ ] How array are implemented
+
+## Editor
+- [ ] How editor support error messages
+- [ ] How debug point is generated
+
+## Yacc
+- [ ] How yacc is used
+- [ ] How to name token
+- [ ] Structure of token
+- [ ] How to created instructions
+- [ ] How 

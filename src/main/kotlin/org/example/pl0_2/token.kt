@@ -1,4 +1,36 @@
-package org.example.pl0
+package org.example.pl0_2
+
+val keywords = mapOf(
+    "begin" to KeyId.Begin,
+    "end" to KeyId.End,
+    "if" to KeyId.If,
+    "while" to KeyId.While,
+    "do" to KeyId.Do,
+    "then" to KeyId.Then,
+    "const" to KeyId.Const,
+    "var" to KeyId.Var,
+    "func" to KeyId.Func,
+    "return" to KeyId.Ret,
+    ":=" to KeyId.Assign,
+    "odd" to KeyId.Odd,
+    "write" to KeyId.Write,
+    "writeln" to KeyId.WriteLn,
+    "+" to KeyId.Plus,
+    "*" to KeyId.Mult,
+    "-" to KeyId.Minus,
+    "/" to KeyId.Div,
+    "(" to KeyId.Lparen,
+    ")" to KeyId.Rparen,
+    "=" to KeyId.Equal,
+    "<>" to KeyId.NotEq,
+    "<" to KeyId.Lss,
+    "<=" to KeyId.LssEq,
+    ">" to KeyId.Gtr,
+    ">=" to KeyId.GtrEq,
+    "." to KeyId.Period,
+    "," to KeyId.Comma,
+    ";" to KeyId.Semicolon,
+)
 
 enum class KeyId {
     Begin, End,                /*　予約語の名前　*/
@@ -23,9 +55,13 @@ enum class KeyId {
 }
 
 abstract class Token(val kind: KeyId)
-class KeywordToken(val keyId: KeyId) : Token(keyId)
+open class KeywordToken(val keyId: KeyId) : Token(keyId)
+class ConstToken() : KeywordToken(KeyId.Const)
+class VarToken() : KeywordToken(KeyId.Var)
+class FuncToken() : KeywordToken(KeyId.Func)
+
 class NumToken(val value: Int) : Token(KeyId.Num)
-class IdentifierToken(val id: String) : Token(KeyId.Identifier)
+open class IdentifierToken(val id: String) : Token(KeyId.Identifier)
 
 object CharClassMap {
     private val map = mutableMapOf<Char, KeyId>()

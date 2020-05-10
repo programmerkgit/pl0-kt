@@ -4,7 +4,7 @@ import org.example.LL1Parser.leftPar
 import kotlin.math.acos
 import kotlin.math.tan
 
-var token: Token? = null
+var token: Token = null
 val codes: MutableList<Instruction> = mutableListOf()
 val nameTable = mutableListOf<TableEntry>()
 var level = 0
@@ -41,7 +41,7 @@ fun tIdentifier(id: KeyId) {
 }
 
 /**
- * block {constDec|varDec|funcDec} statement
+ * org.example.pl0_2.block {constDec|varDec|funcDec} statement
  * */
 
 /* What is pIndex? */
@@ -138,7 +138,7 @@ fun funcDec() {
         endPar(fIndex)
     }
     block(fIndex)
-    /* T(function ( {ident//,}? ) block ; ) */
+    /* T(function ( {ident//,}? ) org.example.pl0_2.block ; ) */
 }
 
 fun endPar(funIndex: Int) {
