@@ -1,15 +1,5 @@
 package org.example.automaton2
 
-abstract class AutomatonState(
-    var isStart: Boolean = false,
-    var isFinal: Boolean = false
-) {
-
-
-    abstract operator fun get(char: Char): Any
-    abstract fun copy(): Any
-}
-
 class NFAState(
     isStart: Boolean = false,
     isFinal: Boolean = false,
@@ -75,7 +65,7 @@ class NFAState(
     }
 
 
-    override operator fun get(char: Char): Set<NFAState> {
+    operator fun get(char: Char): Set<NFAState> {
         return transitions[char] ?: setOf()
     }
 
@@ -92,43 +82,4 @@ class NFAState(
         transitions.getOrPut(char) { mutableSetOf() }.addAll(nfaState)
     }
 
-}
-
-class DFAState(
-    isStart: Boolean = false,
-    isFinal: Boolean = false,
-    val nfaStateSet: Set<NFAState> = setOf(),
-    private val transitions: MutableMap<Char, DFAState> = mutableMapOf()
-) : AutomatonState(isStart, isFinal) {
-
-    /* stateが作られた時,遷移可能なDFAStateを全て作成する */
-
-    override fun copy(): DFAState {
-        return DFAState(
-            isStart,
-            isFinal,
-            nfaStateSet,
-            transitions
-        )
-    }
-
-    override operator fun get(char: Char): DFAState {
-        return if (transitions[char] == null) {
-            val nextState = nfaStateSet.flatMap { it[char] }.flatMap { it.retrieveEpsilonTransitions() }.toSet()
-            val final = nextState.any { it.isFinal }
-            val dfa = DFAState(isFinal = final, nfaStateSet = nextState)
-            transitions[char] = dfa
-            return dfa
-        } else {
-            checkNotNull(transitions[char])
-        }
-    }
-
-    operator fun set(char: Char, dfaState: DFAState) {
-        transitions[char] = dfaState
-    }
-
-    fun getOrPut(char: Char, f: () -> DFAState): DFAState {
-        return transitions.getOrPut(char) { f() }
-    }
 }

@@ -3,11 +3,14 @@ package org.example.automaton2
 
 class NFA : Automaton {
 
+    val inputs = mutableSetOf<Char>()
+
     /* getterにしたい　*/
     private var start: NFAState
 
-    constructor(startState: NFAState) {
+    constructor(startState: NFAState, newInputs: Set<Char>) {
         start = startState
+        inputs.addAll(newInputs)
     }
 
     constructor(char: Char? = null) {
@@ -19,6 +22,7 @@ class NFA : Automaton {
                 firstState
             }
             else -> {
+                inputs.add(char)
                 val firstState = NFAState(isStart = true)
                 val finalState = NFAState(isFinal = true)
                 firstState.add(char, finalState)
@@ -29,6 +33,7 @@ class NFA : Automaton {
 
     constructor(pattern: String) {
         start = toNFA(pattern).start
+        pattern.forEach { inputs.add(it) }
     }
 
 
@@ -39,7 +44,7 @@ class NFA : Automaton {
 
     fun deepCopy(): NFA {
         val newStart = start.deepCopy()
-        return NFA(newStart)
+        return NFA(newStart, inputs)
     }
 
     /* sAf sBf => sAfBf */
@@ -51,7 +56,7 @@ class NFA : Automaton {
         aFinal.addEpsilon(bStart)
         aFinal.isFinal = false
         bStart.isStart = false
-        return NFA(a.start)
+        return NFA(a.start, a.inputs + b.inputs)
     }
 
     fun retrieveState(): Set<NFAState> {
@@ -75,7 +80,7 @@ class NFA : Automaton {
         bStart.isStart = false
         aFinal.isFinal = false
         bFinal.isFinal = false
-        return NFA(start)
+        return NFA(start, a.inputs + b.inputs)
     }
 
     fun positiveClosure(): NFA {
@@ -83,33 +88,33 @@ class NFA : Automaton {
     }
 
     fun closure(): NFA {
-        val a = deepCopy()
-        val aStart = a.start
-        val aFinal = a.final
-        aStart.isStart = false
-        aFinal.isFinal = false
+        val cp = deepCopy()
+        val cpStart = cp.start
+        val cpFinal = cp.final
+        cpStart.isStart = false
+        cpFinal.isFinal = false
 
         /* closure */
         val start = NFAState(isStart = true)
         val final = NFAState(isFinal = true)
         /* 1*/
-        aFinal.addEpsilon(aStart)
-        aFinal.addEpsilon(final)
+        cpFinal.addEpsilon(cpStart)
+        cpFinal.addEpsilon(final)
         /* 2 */
-        start.addEpsilon(aStart)
+        start.addEpsilon(cpStart)
         start.addEpsilon(final)
-        return NFA(start)
+        return NFA(start, cp.inputs)
     }
 
     fun nullable(): NFA {
-        val a = deepCopy()
-        a.start.addEpsilon(a.final)
-        return NFA(a.start)
+        val cp = deepCopy()
+        cp.start.addEpsilon(cp.final)
+        return NFA(cp.start, inputs)
     }
 
     fun toDFA(): DFA {
-        val a = deepCopy()
-        val startState = DFAState(isStart = true, nfaStateSet = a.start.retrieveEpsilonTransitions())
-        return DFA(startState)
+        val cp = deepCopy()
+        val startState = DFAState(isStart = true, nfaStateSet = cp.start.retrieveEpsilonTransitions())
+        return DFA(startState, cp.inputs)
     }
 }
