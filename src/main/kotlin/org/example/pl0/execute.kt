@@ -1,18 +1,27 @@
+/*
 package org.example.pl0
 
+*/
 /**
  * blockBegin
  *
- * */
+ * *//*
 
 
+
+*/
 /*
-typedef enum codes{			*/
+typedef enum codes{			*//*
+
+*/
 /*　命令語のコード　*//*
+*/
+/*
 
     lit, opr, lod, sto, cal, ret, ict, jmp, jpc
 }OpCode;
-*/
+*//*
+
 
 enum class Code {
     lit,
@@ -57,23 +66,31 @@ class Odd : Instruction3(Code.opr)
 class Wrt : Instruction3(Code.opr)
 class Wrl : Instruction3(Code.opr)
 
-/* mutable ?  */
+*/
+/* mutable ?  *//*
+
 fun execute(instructions: MutableList<Instruction>) {
     var pc = 0;
     var stack = mutableListOf<Int>()
     stack.add(0)
     stack.add(0)
-    /* top不要? */
+    */
+/* top不要? *//*
+
     val display = mutableListOf(0)
     do {
-        /* breakとcontinueの差は?? */
+        */
+/* breakとcontinueの差は?? *//*
+
         when (val inst = instructions[pc++]) {
             is Lit -> stack.add(inst.value)
             is Lod -> stack.add(stack[display[inst.level] + inst.addr])
             is Sto -> stack[display[inst.level] + inst.addr] = stack.pop()
             is Cal -> {
                 val level = inst.level + 1
-                /* get or null? */
+                */
+/* get or null? *//*
+
                 stack.add(display[level])
                 stack.add(pc)
                 display[level] = stack.size - 2
@@ -84,11 +101,15 @@ fun execute(instructions: MutableList<Instruction>) {
                 val top = display[inst.level]
                 display[inst.level] = stack[top]
                 pc = stack[top + 1]
-                /* displayの手前に引数分の変数領域がある */
+                */
+/* displayの手前に引数分の変数領域がある *//*
+
                 stack = stack.slice(0 until stack.size - inst.addr).toMutableList()
                 stack.add(ret)
             }
-            is Ict -> {/* Is increment necessary */
+            is Ict -> {*/
+/* Is increment necessary *//*
+
             }
             is Jmp -> pc = inst.value
             is Jpc -> {
@@ -113,4 +134,4 @@ fun execute(instructions: MutableList<Instruction>) {
             else -> error("unexpected instruction")
         }
     } while (pc != 0)
-}
+}*/

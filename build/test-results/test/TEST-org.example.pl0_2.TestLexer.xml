@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.example.pl0_2.TestLexer" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-05-22T08:46:44" hostname="keishis-iMac.local" time="0.04">
+  <properties/>
+  <testcase name="testConstDecl" classname="org.example.pl0_2.TestLexer" time="0.04"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

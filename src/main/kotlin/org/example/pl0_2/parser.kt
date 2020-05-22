@@ -1,7 +1,6 @@
-package org.example
+package org.example.pl0_2
 
-import org.example.pl0.*
-import org.example.topDownParser.block
+import org.example.*
 
 
 private enum class Precedence {
@@ -52,9 +51,9 @@ private val precedenceMap = mapOf<TokenKind, Precedence>(
 
 * */
 
-class Parser(input: String) {
+class Parser(lexer: Lexer) {
 
-    private val tokenizer = Lexer(input)
+    private val tokenizer = lexer
 
     private var currentToken: Token = tokenizer.nextToken()
 
@@ -64,11 +63,11 @@ class Parser(input: String) {
         return next
     }
 
-    private fun parse() {
-
+    fun parse() {
+        parseBlock()
     }
 
-    private fun parseProgram() {
+    private fun parseBlock() {
         when (currentToken) {
             is VarToken -> {
                 parseVarDecl()
@@ -90,7 +89,7 @@ class Parser(input: String) {
         assertAndReadToken<ConstToken>()
         while (true) {
             parseIdentifier()
-            assertAndReadToken<EqualToken>()
+            assertAndReadToken<AssignToken>()
             val number = assertAndReadToken<IntToken>()
             if (currentToken !is CommaToken) {
                 break
@@ -132,7 +131,7 @@ class Parser(input: String) {
             }
         }
         assertAndReadToken<RParentToken>()
-        block()
+        parseBlock()
         assertAndReadToken<SemicolonToken>()
     }
 
@@ -276,7 +275,7 @@ class Parser(input: String) {
             }
             is LParenToken -> {
                 assertAndReadToken<LParenToken>()
-                expression()
+                parseExpression()
                 assertAndReadToken<RParentToken>()
             }
         }

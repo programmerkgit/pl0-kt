@@ -2,7 +2,6 @@
 src配下でないと効かない。
 設定方法がありそう。# pl0-kt
 
-
 ## Kotlin to learn
 - [x] ファイルの操作の理解が必
 - [x] Stdlibの理解が必要

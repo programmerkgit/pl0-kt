@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="org.example.automaton.NFATest" tests="3" skipped="0" failures="0" errors="0" timestamp="2020-05-04T10:42:28" hostname="keishis-iMac.local" time="0.025">
-  <properties/>
-  <testcase name="getNullMoveStateSet" classname="org.example.automaton.NFATest" time="0.024"/>
-  <testcase name="testNFANullMoveSet" classname="org.example.automaton.NFATest" time="0.001"/>
-  <testcase name="getGotoStateSet" classname="org.example.automaton.NFATest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

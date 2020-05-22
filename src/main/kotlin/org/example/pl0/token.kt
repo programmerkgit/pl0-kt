@@ -1,24 +1,37 @@
+/*
 package org.example.pl0
 
 enum class KeyId {
-    Begin, End,                /*　予約語の名前　*/
+    Begin, End,                */
+/*　予約語の名前　*//*
+
     If, Then,
     While, Do,
     Ret, Func,
     Var, Const, Odd,
     Write, WriteLn,
-    end_of_KeyWd,                /*　予約語の名前はここまで　*/
-    Plus, Minus,                /*　演算子と区切り記号の名前　*/
+    end_of_KeyWd,                */
+/*　予約語の名前はここまで　*//*
+
+    Plus, Minus,                */
+/*　演算子と区切り記号の名前　*//*
+
     Mult, Div,
     Lparen, Rparen,
     Equal, Lss, Gtr,
     NotEq, LssEq, GtrEq,
     Comma, Period, Semicolon,
     Assign,
-    end_of_KeySym,                /*　演算子と区切り記号の名前はここまで　*/
-    Identifier, Num, nul,                /*　トークンの種類　*/
+    end_of_KeySym,                */
+/*　演算子と区切り記号の名前はここまで　*//*
+
+    Identifier, Num, nul,                */
+/*　トークンの種類　*//*
+
     end_of_Token,
-    letter, digit, colon, others,        /*　上記以外の文字の種類　*/
+    letter, digit, colon, others,        */
+/*　上記以外の文字の種類　*//*
+
     Null
 }
 
@@ -59,10 +72,12 @@ object CharClassMap {
     }
 }
 
+*/
 /*
 * 　文字の種類を示す表にする　
 static org.example.pl0_2.KeyId charClassT[256];
-static void initCharClassT(org.example.pl0_2.KeyId *charClassT)        /*　文字の種類を示す表を作る関数　*/
+static void initCharClassT(org.example.pl0_2.KeyId *charClassT)        /*　文字の種類を示す表を作る関数　*//*
+
 {
     int i;
     for (i = 0; i < 256; i++)
@@ -88,7 +103,8 @@ static void initCharClassT(org.example.pl0_2.KeyId *charClassT)        /*　文�
     charClassT[':'] = colon;
 }
 
-* */
+* *//*
+
 
 var ch: Char? = null
 fun nextChar(): Char {
@@ -152,4 +168,4 @@ fun nextToken(): Token {
     }
 
     TODO("not implement yet")
-}
+}*/

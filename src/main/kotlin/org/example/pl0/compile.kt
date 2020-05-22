@@ -1,10 +1,11 @@
+/*
 package org.example.pl0
 
 import org.example.LL1Parser.leftPar
 import kotlin.math.acos
 import kotlin.math.tan
 
-var token: Token = null
+var token: Token = Token
 val codes: MutableList<Instruction> = mutableListOf()
 val nameTable = mutableListOf<TableEntry>()
 var level = 0
@@ -20,7 +21,9 @@ enum class IdentKind {
     parId,
 }
 
-/* Tokneが保持する情報を確認 */
+*/
+/* Tokneが保持する情報を確認 *//*
+
 abstract class TableEntry(
     val kind: IdentKind, val name: String
 )
@@ -40,30 +43,46 @@ fun tIdentifier(id: KeyId) {
     }
 }
 
+*/
 /**
  * org.example.pl0_2.block {constDec|varDec|funcDec} statement
- * */
+ * *//*
 
-/* What is pIndex? */
+
+*/
+/* What is pIndex? *//*
+
 fun block(pIndex: Int) {
-    /* what is backP? */
+    */
+/* what is backP? *//*
+
     val jmp = Jmp()
     codes.add(jmp)
-    /* T({constDec|varDec|funcDec}statement) */
+    */
+/* T({constDec|varDec|funcDec}statement) *//*
+
     loop@ while (token in first("constDec|verDec|funcDec")) {
-        /* T(constDec|verDec|funcDec) */
+        */
+/* T(constDec|verDec|funcDec) *//*
+
         when (checkNotNull(token)) {
             in first("constDec") -> constDec()
             in first("verDec") -> verDec()
             in first("funcDec") -> funcDec()
         }
     }
-    /* 関数の本体 */
+    */
+/* 関数の本体 *//*
+
     jmp.value = codes.size
     (nameTable[pIndex] as FuncEntry).addr = codes.size
-    /* frame size */
+    */
+/* frame size *//*
+
     codes.add(Ict(1000))
-    /* T(statement) */
+    */
+/* T(statement) *//*
+
     statement()
     codes.add(Ret(level, (nameTable[index[level - 1]!!] as FuncEntry).pars))
 
@@ -75,13 +94,21 @@ fun blockEnd() {
     localAddress = addr[level]!!
 }
 
-/* T(constDec -> const {ident = number//,} ;) */
+*/
+/* T(constDec -> const {ident = number//,} ;) *//*
+
 fun constDec() {
-    /* T(const) */
+    */
+/* T(const) *//*
+
     tIdentifier(KeyId.Const)
-    /* T({ident = number//,})*/
+    */
+/* T({ident = number//,})*//*
+
     while (true) {
-        /* T(ident = number) */
+        */
+/* T(ident = number) *//*
+
         if (checkNotNull(token).kind == KeyId.Identifier) {
             val tmp = checkNotNull(token)
             token = nextToken()
@@ -99,13 +126,19 @@ fun constDec() {
         if (token !in first(",")) break
         tIdentifier(KeyId.colon)
     }
-    /* T(;) */
+    */
+/* T(;) *//*
+
     tIdentifier(KeyId.Semicolon)
 }
 
-/* T(verDec) */
+*/
+/* T(verDec) *//*
+
 fun verDec() {
-    /* T(var {ident//,} ; ) */
+    */
+/* T(var {ident//,} ; ) *//*
+
     tIdentifier(KeyId.Var)
     while (true) {
         tIdentifier(KeyId.Identifier)
@@ -115,7 +148,9 @@ fun verDec() {
     tIdentifier(KeyId.Semicolon)
 }
 
-/* T(funcDec) */
+*/
+/* T(funcDec) *//*
+
 fun funcDec() {
     var fIndex = 0
     tIdentifier(KeyId.Func)
@@ -138,14 +173,18 @@ fun funcDec() {
         endPar(fIndex)
     }
     block(fIndex)
-    /* T(function ( {ident//,}? ) org.example.pl0_2.block ; ) */
+    */
+/* T(function ( {ident//,}? ) org.example.pl0_2.block ; ) *//*
+
 }
 
 fun endPar(funIndex: Int) {
     val pars = (nameTable[funIndex] as FuncEntry).pars
     if (pars == 0) return
     (1 until pars + 1).forEach { i ->
-        /* ?? */
+        */
+/* ?? *//*
+
         (nameTable[funIndex + i] as ParEntry).addr = i - 1 - pars
     }
 }
@@ -158,16 +197,24 @@ fun blockBegin(firstAddress: Int) {
     return
 }
 
-/* T(statement) */
+*/
+/* T(statement) *//*
+
 fun statement() {
-    /*T({(indext | begein.. | if | while | return | write | writeln) }) */
-    /*T((indext | begein.. | if | while | return | write | writeln) ) */
+    */
+/*T({(indext | begein.. | if | while | return | write | writeln) }) *//*
+
+    */
+/*T((indext | begein.. | if | while | return | write | writeln) ) *//*
+
     when (token) {
         in first("ident := expression") -> {
             val tableIndex = nameTable.indexOfLast { it.name == (token as IdentifierToken).id }
             if (token is IdentifierToken) {
                 if (nameTable[tableIndex] !is ValEntry && nameTable[tableIndex] !is ParEntry) {
-                    /* errorType() */
+                    */
+/* errorType() *//*
+
                 }
                 token = nextToken()
             } else {
@@ -185,7 +232,9 @@ fun statement() {
             tIdentifier(KeyId.Begin)
             loop@ while (true) {
                 statement()
-                /* semicolonを忘れたことにする処理を描きたい  */
+                */
+/* semicolonを忘れたことにする処理を描きたい  *//*
+
                 if (token?.kind !in first(KeyId.Semicolon)) break
                 tIdentifier(KeyId.Semicolon)
             }
@@ -202,17 +251,25 @@ fun statement() {
         }
         in first("while") -> {
             tIdentifier(KeyId.While)
-            /* condition評価からループ */
+            */
+/* condition評価からループ *//*
+
             val start = codes.size
             condition()
-            /* endへ飛ぶ。バックパッチ */
+            */
+/* endへ飛ぶ。バックパッチ *//*
+
             val jmpEnd = Jpc(0)
             tIdentifier(KeyId.Do)
             codes.add(jmpEnd)
             statement()
-            /* 必ずスタートに飛ぶ */
+            */
+/* 必ずスタートに飛ぶ *//*
+
             codes.add(Jmp(start))
-            /* 一番最後のCodesへバックパッチ  */
+            */
+/* 一番最後のCodesへバックパッチ  *//*
+
             jmpEnd.value = codes.size
         }
         in first("Write") -> {
@@ -227,7 +284,9 @@ fun statement() {
         in first("return") -> {
             tIdentifier(KeyId.Ret)
             expression()
-            /* 現在のレベルを取得, パラメーター数を取得 */
+            */
+/* 現在のレベルを取得, パラメーター数を取得 *//*
+
             codes.add(Ret(0, 1))
         }
     }
@@ -374,11 +433,17 @@ fun factor() {
                         token = nextToken()
                     }
                     is FuncEntry -> {
-                        /* ident ( expression, ) */
+                        */
+/* ident ( expression, ) *//*
+
                         tTerminal(KeyId.Identifier)
-                        /* T(() */
+                        */
+/* T(() *//*
+
                         tTerminal(KeyId.Lparen)
-                        /* T({expression,} ) */
+                        */
+/* T({expression,} ) *//*
+
                         while (token in first("expression")) {
                             while (true) {
                                 expression()
@@ -423,4 +488,4 @@ fun tTerminal(keyId: KeyId, action: (() -> Unit)? = null) {
     } else {
         error("")
     }
-}
+}*/
