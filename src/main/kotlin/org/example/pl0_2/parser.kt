@@ -126,15 +126,20 @@ class Parser(lexer: Lexer) {
         /* 関数の実行部にjmpする */
         val jmp = Jmp()
         codes.add(jmp)
-        when (currentToken) {
-            is VarToken -> {
-                parseVarDecl()
-            }
-            is FuncToken -> {
-                parseFuncDecl()
-            }
-            is ConstToken -> {
-                parseConstDecl()
+        loop@ while (currentToken is VarToken || currentToken is FuncToken || currentToken is ConstToken) {
+            when (currentToken) {
+                is VarToken -> {
+                    parseVarDecl()
+                }
+                is FuncToken -> {
+                    parseFuncDecl()
+                }
+                is ConstToken -> {
+                    parseConstDecl()
+                }
+                else -> {
+                    break@loop
+                }
             }
         }
         /* 関数の実行部を確定 */
@@ -222,7 +227,7 @@ class Parser(lexer: Lexer) {
         if (currentToken is IdentifierToken) {
             while (true) {
                 val parToken = assertAndReadToken<IdentifierToken>()
-                addEntry(ParEntry(parToken.literal, level, localAddr))
+                addEntry(ParEntry(parToken.literal, level))
                 funcEntry.parCount += 1
                 if (currentToken !is CommaToken) {
                     break
@@ -231,8 +236,12 @@ class Parser(lexer: Lexer) {
             }
         }
         assertAndReadToken<RParentToken>()
+        var i = 0;
+        while (i < funcEntry.parCount) {
+            (nameTable[index + i] as ParEntry).parAddr = i - funcEntry.parCount
+            i++
+        }
         (index until index + funcEntry.parCount).forEach { i ->
-            (nameTable[i] as ParEntry).addr = i -1 - funcEntry.parCount
         }
         assertAndReadToken<LBraceToken>()
         parseBlock(funcEntry)
@@ -260,7 +269,7 @@ class Parser(lexer: Lexer) {
                         addEntry(entry)
                         assertAndReadToken<AssignToken>()
                         parseExpression()
-                        codes.add(Sto(entry.level, entry.addr))
+                        codes.add(Sto(entry.level, entry.parAddr))
                     }
                     else -> {
                         error("unepected entry $entry")
@@ -432,7 +441,7 @@ class Parser(lexer: Lexer) {
                     }
                     /* OK: */
                     is ParEntry -> {
-                        codes.add(Lod(entry.level, entry.addr))
+                        codes.add(Lod(entry.level, entry.parAddr))
                     }
                     is FuncEntry -> {
                         /* f({a //, }?) */

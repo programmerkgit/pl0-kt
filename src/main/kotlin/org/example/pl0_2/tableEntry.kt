@@ -48,7 +48,7 @@ class FuncEntry(
 class ParEntry(
     name: String,
     var level: Int,
-    var addr: Int
+    var parAddr: Int = 0
 ) : TableEntry(VarKind.ParId, name)
 
 class VarEntry(

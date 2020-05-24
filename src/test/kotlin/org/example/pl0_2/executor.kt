@@ -27,7 +27,7 @@ import org.junit.Test
 
 class TestExecutor {
     @Test
-    fun testFactor() {
+    fun testExecuter1() {
         val l = Lexer(
             """
 function a(x, y) {
@@ -45,6 +45,35 @@ end
         val p = Parser(l)
         p.parse()
         Executor(p.codes).execute()
+    }
+
+    @Test
+    fun testExecuter2() {
+        val l = Lexer(
+            """
+function mul(x, y) { 
+    function add(a, b) {
+        begin
+            return a + b;
+        end
+    } 
+    begin
+        return add(1, 2) * x * y;
+    end
+}
+begin
+    write mul(3,2);
+end 
+        """.trimIndent()
+        )
+        val p = Parser(l)
+        p.parse()
+        println()
+        p.codes.forEachIndexed { i, it ->
+            println("$i: $it")
+        }
+        Executor(p.codes).execute()
+        println()
     }
 
 }

@@ -1,18 +1,25 @@
-parCount: 2 index: 1
-i: 0 code: jmp value: 7
-i: 1 code: jmp value: 2
-i: 2 code: ict value: 2
- i: 3 code: lod level: 1 addr:-2
- i: 4 code: lod level: 1 addr:-1
-i: 5 code: mul
-i: 6 code: ret level: 1 addr:2
-i: 7 code: ict value: 2
-i: 8 code: lit value: 2
-i: 9 code: lit value: 3
- i: 10 code: cal level: 0 addr:2
-i: 11 code: wrt
-i: 12 code: wrl
- i: 13 code: ret level: 0 addr:0
-start
-6
-done
+
+0: code: jmp value: 17
+1: code: jmp value: 8
+2: code: jmp value: 3
+3: code: ict value: 2
+4: code: lod level: 2 addr:-2
+5: code: lod level: 2 addr:-1
+6: code: add
+7: code: ret level: 2 addr:2
+8: code: ict value: 2
+9: code: lit value: 1
+10: code: lit value: 2
+11: code: cal level: 1 addr:3
+12: code: lod level: 1 addr:-2
+13: code: mul
+14: code: lod level: 1 addr:-1
+15: code: mul
+16: code: ret level: 1 addr:2
+17: code: ict value: 2
+18: code: lit value: 3
+19: code: lit value: 2
+20: code: cal level: 0 addr:8
+21: code: wrt
+22: code: ret level: 0 addr:0
+18

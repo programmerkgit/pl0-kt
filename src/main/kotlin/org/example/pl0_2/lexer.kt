@@ -126,9 +126,6 @@ class Lexer(private val input: String) {
                 }
                 when (val text = input.slice(startPosition until p)) {
                     /* keywords */
-                    "fn" -> {
-                        ensureSetPosition(FuncToken())
-                    }
                     "function" -> {
                         ensureSetPosition(FuncToken())
                     }

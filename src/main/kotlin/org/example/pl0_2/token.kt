@@ -118,7 +118,7 @@ class GrtToken() : Token(TokenKind.GRT, ">")
 class GrtEqToken() : Token(TokenKind.GRTEQ, ">=")
 
 /* keywods */
-class FuncToken() : Token(TokenKind.FUNCTION, "fn")
+class FuncToken() : Token(TokenKind.FUNCTION, "function")
 class IfToken() : Token(TokenKind.IF, "if")
 class WhenToken() : Token(TokenKind.WHEN, "when")
 class ElseToken() : Token(TokenKind.ELSE, "else")
@@ -132,7 +132,7 @@ class FalseToken() : BoolToken(TokenKind.FALSE, "false")
 /* Assign Keyword */
 class LetToken() : Token(TokenKind.LET, "let")
 class ValToken() : Token(TokenKind.VAL, "val")
-class VarToken() : Token(TokenKind.VAL, "var")
+class VarToken() : Token(TokenKind.VAR, "var")
 class ConstToken() : Token(TokenKind.CONST, "const")
 
 /* other keyword */

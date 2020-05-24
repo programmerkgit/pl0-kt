@@ -10,7 +10,9 @@ class TestLexer {
         val l = Lexer(
             """
 const a = 3;            
-function a(b,c,d) var e,f,g;;
+function a(b,c,d) {
+    var e,f,g
+};
 """.trimIndent()
         )
         val tokens = listOf(
