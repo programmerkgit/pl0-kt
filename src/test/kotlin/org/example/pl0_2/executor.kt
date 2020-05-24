@@ -77,12 +77,7 @@ end
         )
         val p = Parser(l)
         p.parse()
-        println()
-        p.codes.forEachIndexed { i, it ->
-            println("$i: $it")
-        }
         Executor(p.codes).execute()
-        println()
     }
 
 }

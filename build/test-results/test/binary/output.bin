@@ -1,46 +1,3 @@
-
-0: code: jmp value: 25
-1: code: jmp value: 2
-2: code: ict value: 2
-3: code: lod level: 1 addr:-1
-4: code: lit value: 0
-5: code: eq
-6: code: jpc value: 9
-7: code: lit value: 0
-8: code: ret level: 1 addr:1
-9: code: lod level: 1 addr:-1
-10: code: lit value: 1
-11: code: eq
-12: code: jpc value: 15
-13: code: lit value: 1
-14: code: ret level: 1 addr:1
-15: code: lod level: 1 addr:-1
-16: code: lit value: 1
-17: code: sub
-18: code: cal level: 0 addr:2
-19: code: lod level: 1 addr:-1
-20: code: lit value: 2
-21: code: sub
-22: code: cal level: 0 addr:2
-23: code: add
-24: code: ret level: 1 addr:1
-25: code: ict value: 3
-26: code: lit value: 0
-27: code: sto level: 0 addr:2
-28: code: lod level: 0 addr:2
-29: code: lit value: 10
-30: code: lss
-31: code: jpc value: 41
-32: code: lod level: 0 addr:2
-33: code: cal level: 0 addr:2
-34: code: wrt
-35: code: wrl
-36: code: lod level: 0 addr:2
-37: code: lit value: 1
-38: code: add
-39: code: sto level: 0 addr:2
-40: code: jmp value: 28
-41: code: ret level: 0 addr:0
 0
 1
 1
@@ -51,4 +8,3 @@
 13
 21
 34
-
