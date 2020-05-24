@@ -1,4 +1,6 @@
-package org.example
+package org.example.pl0_2
+
+import org.example.*
 
 
 private operator fun Regex.contains(char: Char?): Boolean {
@@ -62,21 +64,12 @@ class Lexer(private val input: String) {
         val startPosition = position
         return when (readChar()) {
             /* math */
-            '+' -> {
-                ensureSetPosition(PlusToken())
-            }
-            '-' -> {
-                ensureSetPosition(MinusToken())
-            }
-            '*' -> {
-                ensureSetPosition(MultiToken())
-            }
-            '/' -> {
-                ensureSetPosition(DivToken())
-            }
+            '+' -> ensureSetPosition(PlusToken())
+            '-' -> ensureSetPosition(MinusToken())
+            '*' -> ensureSetPosition(MultiToken())
+            '/' -> ensureSetPosition(DivToken())
             /* Compare */
-            '>' -> {
-                return when (peakChar()) {
+            '>' -> return when (peakChar()) {
                     '=' -> {
                         incP()
                         ensureSetPosition(GrtEqToken())
@@ -85,27 +78,22 @@ class Lexer(private val input: String) {
                         ensureSetPosition(GrtToken())
                     }
                 }
-            }
-            '<' -> {
-                return when (peakChar()) {
-                    '=' -> {
-                        incP()
-                        ensureSetPosition(LssEqToken())
-                    }
-                    else -> {
-                        ensureSetPosition(LssToken())
-                    }
+            '<' -> return when (peakChar()) {
+                '=' -> {
+                    incP()
+                    ensureSetPosition(LssEqToken())
+                }
+                else -> {
+                    ensureSetPosition(LssToken())
                 }
             }
-            '=' -> {
-                when (peakChar()) {
-                    '=' -> {
-                        incP()
-                        ensureSetPosition(EqualToken())
-                    }
-                    else -> {
-                        ensureSetPosition(AssignToken())
-                    }
+            '=' -> when (peakChar()) {
+                '=' -> {
+                    incP()
+                    ensureSetPosition(EqualToken())
+                }
+                else -> {
+                    ensureSetPosition(AssignToken())
                 }
             }
             '!' -> {
@@ -152,6 +140,8 @@ class Lexer(private val input: String) {
                     "false" -> ensureSetPosition(FalseToken())
                     "if" -> ensureSetPosition(IfToken())
                     "when" -> ensureSetPosition(WhenToken())
+                    "while" -> ensureSetPosition(WhileToken())
+                    "do" -> ensureSetPosition(DoToken())
                     "const" -> ensureSetPosition(ConstToken())
                     "write" -> ensureSetPosition(WriteToken())
                     "writeln" -> ensureSetPosition(WritelnToken())

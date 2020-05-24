@@ -7,7 +7,7 @@ import kotlin.math.tan
 
 var token: Token = Token
 val codes: MutableList<Instruction> = mutableListOf()
-val nameTable = mutableListOf<TableEntry>()
+val nameTable = mutableListOf<org.example.pl0_2.TableEntry>()
 var level = 0
 var localAddress = 0
 val index = mutableMapOf<Int, Int>()
@@ -24,16 +24,16 @@ enum class IdentKind {
 */
 /* Tokneが保持する情報を確認 *//*
 
-abstract class TableEntry(
+abstract class org.example.pl0_2.TableEntry(
     val kind: IdentKind, val name: String
 )
 
-class ValEntry(name: String, val value: Int) : TableEntry(IdentKind.constId, name)
-class VarEntry(name: String, val level: Int, var addr: Int) : TableEntry(IdentKind.varId, name)
-class ParEntry(name: String, val level: Int, var addr: Int) : TableEntry(IdentKind.parId, name)
-class ConstEntry(name: String, val value: Int) : TableEntry(IdentKind.constId, name)
+class ValEntry(name: String, val value: Int) : org.example.pl0_2.TableEntry(IdentKind.constId, name)
+class VarEntry(name: String, val level: Int, var addr: Int) : org.example.pl0_2.TableEntry(IdentKind.varId, name)
+class ParEntry(name: String, val level: Int, var addr: Int) : org.example.pl0_2.TableEntry(IdentKind.parId, name)
+class ConstEntry(name: String, val value: Int) : org.example.pl0_2.TableEntry(IdentKind.constId, name)
 class FuncEntry(name: String, val level: Int = 0, var addr: Int = 0, var pars: Int = 0) :
-    TableEntry(IdentKind.funcId, name)
+    org.example.pl0_2.TableEntry(IdentKind.funcId, name)
 
 fun tIdentifier(id: KeyId) {
     if (checkNotNull(token).kind == id) {

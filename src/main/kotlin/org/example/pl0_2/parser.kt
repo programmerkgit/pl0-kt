@@ -51,9 +51,54 @@ private val precedenceMap = mapOf<TokenKind, Precedence>(
 
 * */
 
+/**
+ * program := block .
+ * block := [constDecl|varDecl|funcDecl] statement
+ * constDecl := const identifier = number{, identifier = number } ;
+ * varDecl := var identifier{, identifier};
+ * funcDecl := function ident ([ident{, ident}]) {block};
+ * statement := identifier = expression
+ *              | begin statement{; statement} end
+ *              | if ( condition ) then { statement }
+ *              | while (condition) do { statement }
+ *              | return expression
+ *              | write expression
+ *              | writeln
+ *              |
+ * condition := expression =|<>|<|>|<=|>= expression
+ * expression := [+|-] term {+ term}
+ * term := factor {(*|/) factor }
+ * factor := ident
+ *          | number
+ *          | ident ([expression{, expression}])
+ *          | ( expression )
+ *
+ * */
+
 class Parser(lexer: Lexer) {
 
+    /*
+      index[0] = 0
+      lAddr[0] = 3
+      index[1] = 2
+      lAddr[2] = 4
+      localAddr = 5 ?
+    * 0 f
+    * 1 x
+    * 2 y
+    * 3 g
+    * 4 a
+    * 5 b
+    * */
+    private val levelIndex = mutableMapOf(-1 to 0)
+    private val levelAddr = mutableMapOf(-1 to 0)
+    private var level: Int = 0
+    private var localAddr: Int = 2
+    private var curLevelIndex: Int = 0
+
     private val tokenizer = lexer
+    private val nameTable = mutableListOf<TableEntry>()
+    val codes = mutableListOf<Instruction>()
 
     private var currentToken: Token = tokenizer.nextToken()
 
@@ -67,7 +112,20 @@ class Parser(lexer: Lexer) {
         parseBlock()
     }
 
-    private fun parseBlock() {
+    private fun blockBegin(firstAddr: Int = 2) {
+        /* level => Table Index */
+        levelIndex[level] = nameTable.size
+        levelAddr[level] = localAddr
+        localAddr = firstAddr
+        level++
+        return
+    }
+
+    /* OK */
+    private fun parseBlock(funcEntry: FuncEntry? = null) {
+        /* 関数の実行部にjmpする */
+        val jmp = Jmp()
+        codes.add(jmp)
         when (currentToken) {
             is VarToken -> {
                 parseVarDecl()
@@ -78,19 +136,41 @@ class Parser(lexer: Lexer) {
             is ConstToken -> {
                 parseConstDecl()
             }
-            else -> {
-                parseStatement()
-            }
         }
+        /* 関数の実行部を確定 */
+        jmp.value = codes.size
+        /* Tableの関数も修正。なくても動く。最適化のため */
+        if (funcEntry != null) {
+            funcEntry.rAddr = codes.size
+        }
+        /*　ブロックの始まり　*/
+        codes.add(Ict(localAddr))
+        parseStatement()
+        if (codes.last() !is Ret) {
+            codes.add(Ret(level, funcEntry?.parCount ?: 0))
+        }
+        /* block end */
+        blockEnd()
     }
 
+    private fun blockEnd() {
+        level--
+        var i = checkNotNull(levelIndex[level])
+        (i until nameTable.size).forEach {
+            nameTable.removeAt(nameTable.size - 1)
+        }
+        localAddr = checkNotNull(levelAddr[level])
+    }
+
+    /* OK */
     private fun parseConstDecl() {
         /* const ident = number{, ident = number} */
         assertAndReadToken<ConstToken>()
         while (true) {
-            parseIdentifier()
+            val id = parseIdentifier()
             assertAndReadToken<AssignToken>()
             val number = assertAndReadToken<IntToken>()
+            addEntry(ConstEntry(id.literal, number.literal.toInt()))
             if (currentToken !is CommaToken) {
                 break
             }
@@ -99,15 +179,27 @@ class Parser(lexer: Lexer) {
         assertAndReadToken<SemicolonToken>()
     }
 
+    /* OK */
     private fun parseIdentifier(): IdentifierToken {
         return assertAndReadToken()
     }
 
+    private fun addEntry(tableEntry: TableEntry) {
+        nameTable.add(tableEntry)
+        if (tableEntry is VarEntry) {
+            localAddr++;
+        }
+    }
+
+    /* OK */
     private fun parseVarDecl() {
         /*  var ident{, ident} ; */
         assertAndReadToken<VarToken>()
         while (true) {
             val identifier = assertAndReadToken<IdentifierToken>()
+            /* add varDecl */
+            val entry = VarEntry(identifier.literal, level, localAddr)
+            addEntry(entry)
             if (currentToken !is CommaToken) {
                 break
             }
@@ -116,14 +208,22 @@ class Parser(lexer: Lexer) {
         assertAndReadToken<SemicolonToken>()
     }
 
+    /* OK */
     private fun parseFuncDecl() {
-        /* func. identifier ([ident{, ident}]) block; */
+        /* function ident ([ident{, ident}]) {block} */
         assertAndReadToken<FuncToken>()
         val identifierToken = assertAndReadToken<IdentifierToken>()
+        val funcEntry = FuncEntry(identifierToken.literal, level, codes.size, 0)
+        addEntry(funcEntry)
+        val index = nameTable.size
         assertAndReadToken<LParenToken>()
+        blockBegin()
+        /* )ジャない場合 */
         if (currentToken is IdentifierToken) {
             while (true) {
-                val arg = assertAndReadToken<IdentifierToken>()
+                val parToken = assertAndReadToken<IdentifierToken>()
+                addEntry(ParEntry(parToken.literal, level, localAddr))
+                funcEntry.parCount += 1
                 if (currentToken !is CommaToken) {
                     break
                 }
@@ -131,18 +231,59 @@ class Parser(lexer: Lexer) {
             }
         }
         assertAndReadToken<RParentToken>()
-        parseBlock()
-        assertAndReadToken<SemicolonToken>()
+        (index until index + funcEntry.parCount).forEach { i ->
+            (nameTable[i] as ParEntry).addr = i -1 - funcEntry.parCount
+        }
+        assertAndReadToken<LBraceToken>()
+        parseBlock(funcEntry)
+        assertAndReadToken<RBraceToken>()
+    }
+
+    private fun endPar() {
+
     }
 
     private fun parseStatement() {
         when (currentToken) {
             is IdentifierToken -> {
+                /* OK */
                 /* ident := expression */
                 val token = assertAndReadToken<IdentifierToken>()
-                assertNextToken<AssignToken>()
-                parseExpression()
+                when (val entry = findEntry(token.literal)) {
+                    is VarEntry -> {
+                        addEntry(entry)
+                        assertAndReadToken<AssignToken>()
+                        parseExpression()
+                        codes.add(Sto(entry.level, entry.addr))
+                    }
+                    is ParEntry -> {
+                        addEntry(entry)
+                        assertAndReadToken<AssignToken>()
+                        parseExpression()
+                        codes.add(Sto(entry.level, entry.addr))
+                    }
+                    else -> {
+                        error("unepected entry $entry")
+                    }
+                }
             }
+            /* OK */
+            is IfToken -> {
+                /* if ( condition ) then { statement } */
+                assertAndReadToken<IfToken>()
+                assertAndReadToken<LParenToken>()
+                parseCondition()
+                assertAndReadToken<RParentToken>()
+                assertAndReadToken<ThenToken>()
+                assertAndReadToken<LBraceToken>()
+                val jpc = Jpc()
+                codes.add(jpc)
+                parseStatement()
+                /* back patch */
+                jpc.value = codes.size
+                assertAndReadToken<RBraceToken>()
+            }
+            /* OK */
             is BeginToken -> {
                 /* begin statement{; statement} end */
                 assertAndReadToken<BeginToken>()
@@ -155,123 +296,173 @@ class Parser(lexer: Lexer) {
                 }
                 assertAndReadToken<EndToken>()
             }
-            is IfToken -> {
-                /* if condition then statement */
-                assertAndReadToken<IfToken>()
-                parseCondition()
-                assertAndReadToken<ThenToken>()
-                parseStatement()
-            }
+            /* OK */
             is WhileToken -> {
-                /* while condition do statement */
+                /* while ( condition ) do { statement }*/
                 assertAndReadToken<WhileToken>()
+                assertAndReadToken<LParenToken>()
+                val i = codes.size
                 parseCondition()
+                assertAndReadToken<RParentToken>()
+                val jpc = Jpc()
+                codes.add(jpc)
                 assertAndReadToken<DoToken>()
+                assertAndReadToken<LBraceToken>()
                 parseStatement()
+                codes.add(Jmp(i))
+                jpc.value = codes.size
+                assertAndReadToken<RBraceToken>()
             }
+            /* OK */
             is ReturnToken -> {
                 assertAndReadToken<ReturnToken>()
                 parseExpression()
+                val funcEntry = nameTable[checkNotNull(levelIndex[level - 1]) - 1]
+                if (funcEntry !is FuncEntry) {
+                    error("entry should be function")
+                }
+                codes.add(Ret(level, funcEntry.parCount))
             }
             is WriteToken -> {
+                /* OK */
                 assertAndReadToken<WriteToken>()
                 parseExpression()
+                codes.add(Wrt())
             }
             is WritelnToken -> {
                 assertAndReadToken<WritelnToken>()
+                /* OK */
+                codes.add(Wrl())
+            }
+            else -> {
+
             }
         }
     }
 
-
+    /* OK* */
     private fun parseCondition() {
         /* expression [=|<>|<|>|<=|>=] expression */
         parseExpression()
-        when (currentToken) {
-            is EqualToken -> {
-                assertAndReadToken<EqualToken>()
-            }
-            is NotEqToken -> {
-                assertAndReadToken<NotEqToken>()
-            }
-            is LssToken -> {
-                assertAndReadToken<LssToken>()
-            }
-            is LssEqToken -> {
-                assertAndReadToken<LssEqToken>()
-            }
-            is GrtToken -> {
-                assertAndReadToken<GrtToken>()
-            }
-            is GrtEqToken -> {
-                assertAndReadToken<GrtEqToken>()
-            }
-            else -> {
-                error("should be comp op")
-            }
+        val token = currentToken
+        when (token) {
+            is EqualToken -> assertAndReadToken<EqualToken>()
+            is NotEqToken -> assertAndReadToken<NotEqToken>()
+            is LssToken -> assertAndReadToken<LssToken>()
+            is LssEqToken -> assertAndReadToken<LssEqToken>()
+            is GrtToken -> assertAndReadToken<GrtToken>()
+            is GrtEqToken -> assertAndReadToken<GrtEqToken>()
+            else -> error("should be comp op")
         }
-        nextToken()
         parseExpression()
+        when (token) {
+            is EqualToken -> codes.add(Eq())
+            is NotEqToken -> codes.add(NotEq())
+            is LssToken -> codes.add(Lss())
+            is LssEqToken -> codes.add(LssEq())
+            is GrtToken -> codes.add(Grt())
+            is GrtEqToken -> codes.add(GrtEq())
+            else -> error("should be comp op")
+        }
     }
 
+    /* OK */
     private fun parseExpression() {
         /* [+|-]? {term // [+|-] term} */
-        if (currentToken is PlusToken) {
-            val prefixToken = currentToken
-            nextToken()
+        when (currentToken) {
+            is PlusToken -> {
+                nextToken()
+                parseTerm()
+                codes.add(Add())
+            }
+            is MinusToken -> {
+                nextToken()
+                parseTerm()
+                codes.add(Sub())
+            }
+            else -> {
+                parseTerm()
+            }
         }
-        if (currentToken is MinusToken) {
-            val prefixToken = currentToken
+        while (currentToken is PlusToken || currentToken is MinusToken) {
+            val token = currentToken
             nextToken()
-        }
-        while (true) {
             parseTerm()
-            if (currentToken !is PlusToken) {
-                break
+            when (token) {
+                is PlusToken -> codes.add(Add())
+                is MinusToken -> codes.add(Sub())
+                else -> error("unexpected path")
             }
-            if (currentToken !is MinusToken) {
-                break
-            }
-            val opToken = nextToken()
         }
     }
 
+    /* OK */
     private fun parseTerm() {
         /* factor {*\/ factor} */
-        while (true) {
-            parseFactor()
-            if (currentToken !is MultiToken) {
-                break
-            }
-            if (currentToken !is DivToken) {
-                break
-            }
+        parseFactor()
+        while (currentToken is MultiToken || currentToken is DivToken) {
+            val token = currentToken
             nextToken()
+            parseFactor()
+            when (token) {
+                is MultiToken -> codes.add(Mul())
+                is DivToken -> codes.add(Div())
+                else -> error("unexpected path here")
+            }
         }
     }
 
+    private fun findEntry(name: String): TableEntry {
+        return checkNotNull(nameTable.findLast { it.name == name })
+    }
+
+    /* OK? */
     private fun parseFactor() {
         when (currentToken) {
             is IdentifierToken -> {
-                parseIdentifier()
-            }
-            is IntToken -> {
-                parseNumber()
-            }
-            is IdentifierToken -> {
-                assertAndReadToken<LParenToken>()
-                /* {express//,} */
-                if (currentToken is RParentToken) {
-                    nextToken()
-                } else {
-                    while (true) {
-                        parseExpression()
-                        if (currentToken !is CommaToken) {
-                            break
+                /* semantic */
+                when (val entry = findEntry(parseIdentifier().literal)) {
+                    /* OK: */
+                    is ConstEntry -> {
+                        codes.add(Lit(entry.value))
+                    }
+                    /* OK: */
+                    is VarEntry -> {
+                        codes.add(Lod(entry.level, entry.addr))
+                    }
+                    /* OK: */
+                    is ParEntry -> {
+                        codes.add(Lod(entry.level, entry.addr))
+                    }
+                    is FuncEntry -> {
+                        /* f({a //, }?) */
+                        var parCount = 0;
+                        assertAndReadToken<LParenToken>()
+                        /* {a //, } */
+                        if (currentToken !is RParentToken) {
+                            while (true) {
+                                parseExpression()
+                                parCount++
+                                if (currentToken !is CommaToken) {
+                                    break
+                                }
+                                assertAndReadToken<CommaToken>()
+                            }
                         }
-                        nextToken()
+                        if (entry.parCount != parCount) {
+                            error("count arguments not match")
+                        }
+                        assertAndReadToken<RParentToken>()
+                        /* gen code T Call */
+                        codes.add(Cal(entry.level, entry.rAddr))
                     }
                 }
+            }
+            is IntToken -> {
+                /* OK */
+                val intToken = assertAndReadToken<IntToken>()
+                /* semantic */
+                codes.add(Lit(intToken.literal.toInt()))
             }
             is LParenToken -> {
                 assertAndReadToken<LParenToken>()
@@ -281,8 +472,9 @@ class Parser(lexer: Lexer) {
         }
     }
 
-    private fun parseNumber() {
-        assertAndReadToken<IntToken>()
+    /* OK */
+    private fun parseNumber(): IntToken {
+        return assertAndReadToken()
     }
 
     private inline fun <reified T> assertAndReadToken(): T {

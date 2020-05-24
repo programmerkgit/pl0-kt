@@ -3,7 +3,6 @@ package org.example.pl0_2
 import org.example.*
 import org.junit.Test
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotSame
 
 class TestLexer {
     @Test
