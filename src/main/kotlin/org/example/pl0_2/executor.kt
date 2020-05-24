@@ -85,7 +85,7 @@ class Lss : Instruction3(Code.lss)
 class GrtEq : Instruction3(Code.grteq)
 class LssEq : Instruction3(Code.lsseq)
 class Add : Instruction3(Code.add)
-class Sub : Instruction3(Code.sto)
+class Sub : Instruction3(Code.sub)
 class Mul : Instruction3(Code.mul)
 class Div : Instruction3(Code.div)
 class Odd : Instruction3(Code.odd)
@@ -98,8 +98,6 @@ class Executor(val instructions: MutableList<Instruction>) {
     var stack = mutableListOf<Int>()
     val display = mutableMapOf<Int, Int>(0 to 0)
     fun execute() {
-        stack.add(0)
-        stack.add(0)
         /* top不要? */
         do {
             /* breakとcontinueの差は?? */
@@ -110,10 +108,9 @@ class Executor(val instructions: MutableList<Instruction>) {
                 is Cal -> {
                     val level = inst.level + 1
                     /* get or null? */
-
                     stack.add(display.getOrElse(level) { 0 })
+                    display[level] = stack.lastIndex
                     stack.add(pc)
-                    display[level] = stack.size - 2
                     pc = inst.addr
                 }
                 is Ret -> {
@@ -122,7 +119,10 @@ class Executor(val instructions: MutableList<Instruction>) {
                     display[inst.level] = stack[top]
                     pc = stack[top + 1]
                     /* displayの手前に引数分の変数領域がある */
-                    stack = stack.slice(0 until stack.size - inst.addr).toMutableList()
+                    stack = stack.slice(0 until top).toMutableList()
+                    repeat(inst.addr) {
+                        stack.removeAt(stack.lastIndex)
+                    }
                     stack.add(ret)
                 }
                 is Ict -> {/* Is increment necessary */
@@ -138,9 +138,17 @@ class Executor(val instructions: MutableList<Instruction>) {
                 }
                 is Neg -> stack.add(-stack.pop())
                 is Add -> stack.add(stack.pop() + stack.pop())
-                is Sub -> stack.add(-stack.pop() + stack.pop())
+                is Sub -> {
+                    val b = stack.pop()
+                    val a = stack.pop()
+                    stack.add(a - b)
+                }
                 is Mul -> stack.add(stack.pop() * stack.pop())
-                is Div -> stack.add(stack.pop() * stack.pop())
+                is Div -> {
+                    val b = stack.pop()
+                    val a = stack.pop()
+                    stack.add(a / b)
+                }
                 is Odd -> stack.add(stack.pop() and 1)
                 is Eq -> stack.add(if (stack.pop() == stack.pop()) 1 else 0)
                 is NotEq -> stack.add(if (stack.pop() != stack.pop()) 1 else 0)

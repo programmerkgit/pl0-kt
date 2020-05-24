@@ -1,32 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="org.example.pl0_2.TestExecutor" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-05-24T12:53:23" hostname="keishis-iMac.local" time="0.053">
+<testsuite name="org.example.pl0_2.TestExecutor" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-05-24T14:19:33" hostname="keishis-iMac.local" time="0.107">
   <properties/>
-  <testcase name="testExecuter2" classname="org.example.pl0_2.TestExecutor" time="0.053"/>
+  <testcase name="testExecuter2" classname="org.example.pl0_2.TestExecutor" time="0.107"/>
   <system-out><![CDATA[
-0: code: jmp value: 17
-1: code: jmp value: 8
-2: code: jmp value: 3
-3: code: ict value: 2
-4: code: lod level: 2 addr:-2
-5: code: lod level: 2 addr:-1
-6: code: add
-7: code: ret level: 2 addr:2
-8: code: ict value: 2
-9: code: lit value: 1
-10: code: lit value: 2
-11: code: cal level: 1 addr:3
-12: code: lod level: 1 addr:-2
-13: code: mul
-14: code: lod level: 1 addr:-1
-15: code: mul
-16: code: ret level: 1 addr:2
-17: code: ict value: 2
-18: code: lit value: 3
-19: code: lit value: 2
-20: code: cal level: 0 addr:8
-21: code: wrt
-22: code: ret level: 0 addr:0
-18
+0: code: jmp value: 25
+1: code: jmp value: 2
+2: code: ict value: 2
+3: code: lod level: 1 addr:-1
+4: code: lit value: 0
+5: code: eq
+6: code: jpc value: 9
+7: code: lit value: 0
+8: code: ret level: 1 addr:1
+9: code: lod level: 1 addr:-1
+10: code: lit value: 1
+11: code: eq
+12: code: jpc value: 15
+13: code: lit value: 1
+14: code: ret level: 1 addr:1
+15: code: lod level: 1 addr:-1
+16: code: lit value: 1
+17: code: sub
+18: code: cal level: 0 addr:2
+19: code: lod level: 1 addr:-1
+20: code: lit value: 2
+21: code: sub
+22: code: cal level: 0 addr:2
+23: code: add
+24: code: ret level: 1 addr:1
+25: code: ict value: 3
+26: code: lit value: 0
+27: code: sto level: 0 addr:2
+28: code: lod level: 0 addr:2
+29: code: lit value: 10
+30: code: lss
+31: code: jpc value: 41
+32: code: lod level: 0 addr:2
+33: code: cal level: 0 addr:2
+34: code: wrt
+35: code: wrl
+36: code: lod level: 0 addr:2
+37: code: lit value: 1
+38: code: add
+39: code: sto level: 0 addr:2
+40: code: jmp value: 28
+41: code: ret level: 0 addr:0
+0
+1
+1
+2
+3
+5
+8
+13
+21
+34
+
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

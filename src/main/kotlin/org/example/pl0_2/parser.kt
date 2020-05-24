@@ -283,7 +283,6 @@ class Parser(lexer: Lexer) {
                 assertAndReadToken<LParenToken>()
                 parseCondition()
                 assertAndReadToken<RParentToken>()
-                assertAndReadToken<ThenToken>()
                 assertAndReadToken<LBraceToken>()
                 val jpc = Jpc()
                 codes.add(jpc)

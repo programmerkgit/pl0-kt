@@ -10,7 +10,7 @@ import org.junit.Test
  * funcDecl := function ident ([ident{, ident}]) {block};
  * statement := identifier = expression
  *              | begin statement{; statement} end
- *              | if ( condition ) then { statement }
+ *              | if ( condition ) { statement }
  *              | while (condition) do { statement }
  *              | return expression
  *              | write expression
@@ -48,21 +48,30 @@ end
     }
 
     @Test
-    fun testExecuter2() {
+    fun testExecutor2() {
         val l = Lexer(
             """
-function mul(x, y) { 
-    function add(a, b) {
-        begin
-            return a + b;
-        end
-    } 
+function fibonacci(n) { 
     begin
-        return add(1, 2) * x * y;
+        if(n == 0) {
+            return 0
+        };
+        if (n == 1) {
+            return 1 
+        };
+        return fibonacci(n -1) + fibonacci(n - 2); 
     end
 }
+var i;
 begin
-    write mul(3,2);
+    i = 0;
+    while(i < 10) do { 
+        begin
+            write fibonacci(i);
+            writeln;
+            i = i + 1;
+        end
+    }
 end 
         """.trimIndent()
         )
